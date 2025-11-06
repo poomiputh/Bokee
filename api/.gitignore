@@ -1,0 +1,6 @@
+# .net api files
+bin/
+obj/
+Storage/Book/
+InitialStorage/Book
+Data/*.db
