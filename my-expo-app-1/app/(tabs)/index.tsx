@@ -1,18 +1,19 @@
 import { bookApi } from "@/api/book-api";
 import BookCarousel from "@/components/book-carousel";
 import { Col, Container, Row } from "@/components/layouts/app-layout";
+import AppText from "@/components/texts/app-text";
 import { Book } from "@/types/Book";
 import { Pagination } from "@/types/Pagination";
 import { useQuery } from "@tanstack/react-query";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 
 export default function Index() {
   const router = useRouter();
 
   const { isPending, error, data, refetch } = useQuery<Pagination<Book>>({
-    queryKey: ['booksInfo'],
+    queryKey: ['booksInfo', 1, 6],
     queryFn: () =>
       bookApi.fetchBooks(1, 6)
   });
@@ -34,15 +35,32 @@ export default function Index() {
       }}
     >
       <Container style={{ paddingVertical: 20 }}>
+        {/* Trending */}
+        <Row>
+          <Col span={12}>
+            <AppText style={[styles.titleHeader]}>
+              Trending
+            </AppText>
+          </Col>
+        </Row>
         <Row>
           <Col span={12}>
             <BookCarousel
               data={data?.data ?? []}
-              coverWidth={120}
-              coverHeight={180}
-              itemWidthModifier={0.35}
+              coverWidth={140}
+              coverHeight={210}
+              itemWidthModifier={0.4}
               onPress={(book) => { goToBook(book.id) }}
             />
+          </Col>
+        </Row>
+
+        {/* Continue reading */}
+        <Row>
+          <Col span={12}>
+            <AppText style={[styles.titleHeader]}>
+              Continue reading
+            </AppText>
           </Col>
         </Row>
         <Row>
@@ -53,7 +71,17 @@ export default function Index() {
               coverHeight={180}
               itemWidthModifier={0.35}
               onPress={(book) => { goToBook(book.id) }}
+              disableCenterFocus
             />
+          </Col>
+        </Row>
+
+        {/* Recently added */}
+        <Row>
+          <Col span={12}>
+            <AppText style={[styles.titleHeader]}>
+              Recently added
+            </AppText>
           </Col>
         </Row>
         <Row>
@@ -64,6 +92,28 @@ export default function Index() {
               coverHeight={180}
               itemWidthModifier={0.35}
               onPress={(book) => { goToBook(book.id) }}
+              disableCenterFocus
+            />
+          </Col>
+        </Row>
+
+        {/* Feeling lucky? */}
+        <Row>
+          <Col span={12}>
+            <AppText>
+              Feeling lucky?
+            </AppText>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={12}>
+            <BookCarousel
+              data={data?.data ?? []}
+              coverWidth={120}
+              coverHeight={180}
+              itemWidthModifier={0.35}
+              onPress={(book) => { goToBook(book.id) }}
+              disableCenterFocus
             />
           </Col>
         </Row>
@@ -71,3 +121,9 @@ export default function Index() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  titleHeader: {
+    fontSize: 20
+  }
+});

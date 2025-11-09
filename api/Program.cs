@@ -111,7 +111,10 @@ async Task<List<Book>> AddBooksFromFolderWithZipsAsync(string folderPath, ApiDbC
                 e.Name.EndsWith(".gif", StringComparison.OrdinalIgnoreCase) ||
                 e.Name.EndsWith(".webp", StringComparison.OrdinalIgnoreCase)))
             {
-                throw new InvalidOperationException($"ZIP '{zipPath}' contains non-image files.");
+                string errorMessage = $"ZIP '{zipPath}' contains non-image files.";
+                // throw new InvalidOperationException(errorMessage);
+                Console.WriteLine(errorMessage);
+                continue;
             }
 
             int order = 1;
@@ -149,51 +152,51 @@ async Task<List<Book>> AddBooksFromFolderWithZipsAsync(string folderPath, ApiDbC
     return addedBooks;
 }
 
-// try
-// {
-//     var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "InitialStorage", "Book");
-
-//     // dbContext can be resolved from DI
-//     using var scope = app.Services.CreateScope();
-//     var dbContext = scope.ServiceProvider.GetRequiredService<ApiDbContext>();
-
-//     var books = await AddBooksFromFolderWithZipsAsync(folderPath, dbContext);
-//     Console.WriteLine($"Added {books.Count} books from ZIP files.");
-// }
-// catch (Exception ex)
-// {
-//     Console.Error.WriteLine(ex.Message);
-// }
-
 try
 {
+    var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "InitialStorage", "Book");
+
+    // dbContext can be resolved from DI
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<ApiDbContext>();
 
-    int count = 0;
-    List<Book> pData = new();
-
-    while (count < 1000)
-    {
-        var pRow = new Book
-        {
-            StorageGuid = Guid.NewGuid(),
-            Title = $"Placeholder {count + 1}",
-            TotalPages = 40,
-        };
-
-        pData.Add(pRow);
-        count++;
-    }
-
-    await dbContext.AddRangeAsync(pData);
-    await dbContext.SaveChangesAsync();
-
+    var books = await AddBooksFromFolderWithZipsAsync(folderPath, dbContext);
+    Console.WriteLine($"Added {books.Count} books from ZIP files.");
 }
 catch (Exception ex)
 {
-    Console.Error.WriteLine($"Error: {ex.Message}");
+    Console.Error.WriteLine(ex.Message);
 }
+
+// try
+// {
+//     using var scope = app.Services.CreateScope();
+//     var dbContext = scope.ServiceProvider.GetRequiredService<ApiDbContext>();
+
+//     int count = 0;
+//     List<Book> pData = new();
+
+//     while (count < 1000)
+//     {
+//         var pRow = new Book
+//         {
+//             StorageGuid = Guid.NewGuid(),
+//             Title = $"Placeholder {count + 1}",
+//             TotalPages = 40,
+//         };
+
+//         pData.Add(pRow);
+//         count++;
+//     }
+
+//     await dbContext.AddRangeAsync(pData);
+//     await dbContext.SaveChangesAsync();
+
+// }
+// catch (Exception ex)
+// {
+//     Console.Error.WriteLine($"Error: {ex.Message}");
+// }
 
 // GET
 app.MapGet("/Get/Book/AllInfo", async (ApiDbContext dbContext, int? page, int? pageSize) =>

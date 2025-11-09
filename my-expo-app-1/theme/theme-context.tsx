@@ -17,7 +17,6 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         setIsDark(systemScheme === "dark");
-        console.log(systemScheme === "dark");
     }, [systemScheme]);
 
     return (

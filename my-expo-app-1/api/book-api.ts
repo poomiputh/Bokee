@@ -8,13 +8,15 @@ export const bookApi = {
     if (page) params.append('page', String(page));
     if (pageSize) params.append('pageSize', String(pageSize));
 
-    console.log(params.toString());
-
     if (!page || !pageSize) pageSize = 6;
-    const res = await fetch(`${apiUrl}/Get/Book/AllInfo?${params.toString()}`);
-    return res.json();
+
+    const url = `${apiUrl}/Get/Book/AllInfo?${params.toString()}`;
+    console.log("Fetching from :", url);
+    return fetch(url).then(res => res.json());
   },
   fetchBook: async (bookId: number): Promise<Book> => {
-    return fetch(`${apiUrl}/Get/Book/${bookId}`).then(res => res.json())
+    const url = `${apiUrl}/Get/Book/${bookId}`;
+    console.log("Fetching from :", url);
+    return fetch(url).then(res => res.json());
   }
 };

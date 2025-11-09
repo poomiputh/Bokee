@@ -25,54 +25,53 @@ export default function Index() {
     };
 
     return (
-        <Container>
-            {/* Top Row: Cover + Read Button */}
-            <Row>
-                <Col span={6}>
-                    <Image
-                        style={{
-                            height: 250,
-                            backgroundColor: "grey",
-                            borderRadius: 10,
-                        }}
-                        source={parseSource(`${apiUrl}/Get/Book/${bookId}/1`)}
-                    />
-                </Col>
-                <Col span={6}>
-                    <AppText style={{marginBottom: 15}}>
-                        {data?.title ?? ""}
-                    </AppText>
-                    <AppButton title="Read" onPress={() => { goToPage(1); }} />
-                </Col>
-            </Row>
-
-            {/* Grid of pages using FlatList */}
-            <Row>
-                <Col span={12}>
-                    <FlatList
-                        data={Array.from({ length: data?.totalPages ?? 0 })}
-                        keyExtractor={(_, index) => index.toString()}
-                        numColumns={2}
-                        renderItem={({ index }) => (
-                            <View style={{ flex: 1, padding: 5 }}>
-                                <TouchableOpacity
-                                    onPress={() => { goToPage(index + 1); }}
-                                >
-                                    <Image
-                                        style={{
-                                            height: 250,
-                                            backgroundColor: "grey",
-                                            borderRadius: 10,
-                                        }}
-                                        source={parseSource(`${apiUrl}/Get/Book/${bookId}/${index + 1}`)}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                        )}
-                        showsVerticalScrollIndicator={false}
-                    />
-                </Col>
-            </Row>
-        </Container>
+        <FlatList
+            ListHeaderComponent={
+                <Container>
+                    <Row>
+                        <Col span={6}>
+                            <Image
+                                style={{
+                                    height: 250,
+                                    backgroundColor: "grey",
+                                    borderRadius: 10,
+                                }}
+                                source={parseSource(`${apiUrl}/Get/Book/${bookId}/1`)}
+                            />
+                        </Col>
+                        <Col span={6}>
+                            <AppText style={{ marginBottom: 15 }}>
+                                {data?.title ?? ""}
+                            </AppText>
+                            <AppText style={{ marginBottom: 15 }}>
+                                Total pages: {data?.totalPages ?? ""}
+                            </AppText>
+                            <AppButton title="Read" onPress={() => goToPage(1)} />
+                        </Col>
+                    </Row>
+                </Container>
+            }
+            columnWrapperStyle={{
+                padding: 5
+            }}
+            data={Array.from({ length: data?.totalPages ?? 0 })}
+            keyExtractor={(_, index) => index.toString()}
+            numColumns={2}
+            renderItem={({ index }) => (
+                <View style={{ flex: 1, padding: 5 }}>
+                    <TouchableOpacity onPress={() => goToPage(index + 1)}>
+                        <Image
+                            style={{
+                                height: 250,
+                                backgroundColor: "grey",
+                                borderRadius: 10,
+                            }}
+                            source={parseSource(`${apiUrl}/Get/Book/${bookId}/${index + 1}`)}
+                        />
+                    </TouchableOpacity>
+                </View>
+            )}
+            showsVerticalScrollIndicator={false}
+        />
     );
 }

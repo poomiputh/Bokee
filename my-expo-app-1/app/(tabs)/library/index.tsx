@@ -6,22 +6,14 @@ import AppText from "@/components/texts/app-text";
 import { Book } from "@/types/Book";
 import { Pagination } from "@/types/Pagination";
 import { useQuery } from "@tanstack/react-query";
-import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { PanResponder, ScrollView, StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
+import { useRef, useState } from "react";
+import { ActivityIndicator, PanResponder, ScrollView, StyleSheet, View } from "react-native";
 
 export default function Index() {
     const router = useRouter();
+
     const [currentPage, setCurrentPage] = useState(1);
-
-    const next = () => {
-        setCurrentPage(prev => prev + 1);
-    };
-
-    const prev = () => {
-        setCurrentPage(prev => Math.max(prev - 1, 1));
-    };
-
     const panResponder = useRef(
         PanResponder.create({
             onMoveShouldSetPanResponder: (_, gestureState) =>
@@ -32,30 +24,30 @@ export default function Index() {
             },
         })
     ).current;
-
     const { isPending, error, data, refetch } = useQuery<Pagination<Book>>({
-        queryKey: ['booksInfo', currentPage],
+        queryKey: ['booksInfo', currentPage, 6],
         queryFn: () =>
-            bookApi.fetchBooks(currentPage, 6)
+            bookApi.fetchBooks(currentPage, 6),
     });
 
-    useFocusEffect(
-        useCallback(() => {
-            refetch();
-        }, [])
-    );
+    const next = () => {
+        setCurrentPage(prev => prev + 1);
+    };
 
-    useEffect(() => {
-        refetch();
-    }, [currentPage]);
+    const prev = () => {
+        setCurrentPage(prev => Math.max(prev - 1, 1));
+    };
 
     const goToBook = (bookId: number) => {
         router.push(`/book/${bookId}`);
     };
 
     return (
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+        >
             <Container style={{ flex: 1, paddingVertical: 10 }}>
+                {/* Header */}
                 <Row>
                     <Col span={12}>
                         <View
@@ -66,12 +58,6 @@ export default function Index() {
                         >
                             <AppText>Page {currentPage}, Last page {data?.lastPage}</AppText>
                             <Row style={{ gap: 5 }}>
-                                <AppButton
-                                    title="<<"
-                                    fitContent
-                                    onPress={() => { setCurrentPage(1); }}
-                                    style={styles.navigationButton}
-                                ></AppButton>
                                 <AppButton
                                     title="<"
                                     fitContent
@@ -84,18 +70,16 @@ export default function Index() {
                                     onPress={next}
                                     style={styles.navigationButton}
                                 ></AppButton>
-                                {/* <AppButton
-                                    title=">>"
-                                    fitContent
-                                    onPress={next}
-                                ></AppButton> */}
                             </Row>
                         </View>
                     </Col>
                 </Row>
+
+                {/* Content */}
                 <View {...panResponder.panHandlers} style={{ flex: 1, justifyContent: "space-between" }}>
+                    {/* Book covers */}
                     <Row>
-                        {isPending && <AppText>Loading...</AppText>}
+                        {isPending && <ActivityIndicator />}
                         {error && <AppText>Error: {String(error)}</AppText>}
                         {data &&
                             data.data.map(book => (
@@ -104,7 +88,15 @@ export default function Index() {
                                 </Col>
                             ))}
                     </Row>
+
+                    {/* Pagination actions */}
                     <Row style={{ gap: 5, justifyContent: "center", marginBottom: 15 }}>
+                        <AppButton
+                            title="<<"
+                            fitContent
+                            onPress={() => { setCurrentPage(1); }}
+                            style={styles.navigationButton}
+                        ></AppButton>
                         <AppButton
                             title="<"
                             fitContent
@@ -115,6 +107,12 @@ export default function Index() {
                             title=">"
                             fitContent
                             onPress={next}
+                            style={styles.navigationButton}
+                        ></AppButton>
+                        <AppButton
+                            title=">>"
+                            fitContent
+                            onPress={() => { setCurrentPage(data?.lastPage ?? 1); }}
                             style={styles.navigationButton}
                         ></AppButton>
                     </Row>

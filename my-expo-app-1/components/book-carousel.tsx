@@ -17,6 +17,7 @@ export type BookCarouselProps = {
     coverWidth?: number;
     coverHeight?: number;
     itemWidthModifier?: number;
+    disableCenterFocus?: boolean;
     onPress?: (book: Book) => void;
 };
 
@@ -34,7 +35,7 @@ export default function BookCarousel(props: BookCarouselProps) {
     const { width } = Dimensions.get("window");
     const VISIBLE_WIDTH = width;
     const ITEM_WIDTH = Math.round(width * mergedProps.itemWidthModifier);
-    const SPACER = (VISIBLE_WIDTH - ITEM_WIDTH) / 2;
+    const SPACER = mergedProps.disableCenterFocus ? 0 : (VISIBLE_WIDTH - ITEM_WIDTH) / 2;
     const ITEM_SPACING = 0;
 
     // Add spacers so first and last can center
@@ -50,7 +51,7 @@ export default function BookCarousel(props: BookCarouselProps) {
                 keyExtractor={(item) => item.title + item.id}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                snapToInterval={ITEM_WIDTH + ITEM_SPACING}
+                snapToInterval={mergedProps.disableCenterFocus ? undefined : ITEM_WIDTH + ITEM_SPACING}
                 decelerationRate="fast"
                 bounces={false}
                 contentContainerStyle={{ alignItems: "center" }}
@@ -89,7 +90,7 @@ export default function BookCarousel(props: BookCarouselProps) {
                                 styles.animatedItem,
                                 {
                                     width: ITEM_WIDTH,
-                                    transform: [{ scale }, { translateY }],
+                                    transform: mergedProps.disableCenterFocus ? [] : [{ scale }, { translateY }],
                                 },
                             ]}
                         >
