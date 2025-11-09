@@ -14,20 +14,24 @@ Directory.CreateDirectory(bookPath);
 
 var dbFilePath = Path.Combine("./Data", "book.db");
 
-// Delete database and book files if in development
-if (builder.Environment.IsDevelopment())
-{
-    if (File.Exists(dbFilePath))
-    {
-        File.Delete(dbFilePath);
-    }
+// ========== Extract book ==========
 
-    if (Directory.Exists(bookPath))
-    {
-        Directory.Delete(bookPath, recursive: true);
-        Directory.CreateDirectory(bookPath);
-    }
-}
+// Delete database and book files if in development
+// if (builder.Environment.IsDevelopment())
+// {
+//     if (File.Exists(dbFilePath))
+//     {
+//         File.Delete(dbFilePath);
+//     }
+
+//     if (Directory.Exists(bookPath))
+//     {
+//         Directory.Delete(bookPath, recursive: true);
+//         Directory.CreateDirectory(bookPath);
+//     }
+// }
+
+// ========== Extract book ==========
 
 builder.Services.AddDbContext<ApiDbContext>(opt => opt.UseSqlite($"Data Source={dbFilePath}"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -73,6 +77,8 @@ if (app.Environment.IsDevelopment())
         config.DocExpansion = "list";
     });
 }
+
+// ========== Extract book ==========
 
 async Task<List<Book>> AddBooksFromFolderWithZipsAsync(string folderPath, ApiDbContext dbContext)
 {
@@ -152,21 +158,21 @@ async Task<List<Book>> AddBooksFromFolderWithZipsAsync(string folderPath, ApiDbC
     return addedBooks;
 }
 
-try
-{
-    var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "InitialStorage", "Book");
+// try
+// {
+//     var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "InitialStorage", "Book");
 
-    // dbContext can be resolved from DI
-    using var scope = app.Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApiDbContext>();
+//     // dbContext can be resolved from DI
+//     using var scope = app.Services.CreateScope();
+//     var dbContext = scope.ServiceProvider.GetRequiredService<ApiDbContext>();
 
-    var books = await AddBooksFromFolderWithZipsAsync(folderPath, dbContext);
-    Console.WriteLine($"Added {books.Count} books from ZIP files.");
-}
-catch (Exception ex)
-{
-    Console.Error.WriteLine(ex.Message);
-}
+//     var books = await AddBooksFromFolderWithZipsAsync(folderPath, dbContext);
+//     Console.WriteLine($"Added {books.Count} books from ZIP files.");
+// }
+// catch (Exception ex)
+// {
+//     Console.Error.WriteLine(ex.Message);
+// }
 
 // try
 // {
@@ -197,6 +203,8 @@ catch (Exception ex)
 // {
 //     Console.Error.WriteLine($"Error: {ex.Message}");
 // }
+
+// ========== Extract book ==========
 
 // GET
 app.MapGet("/Get/Book/AllInfo", async (ApiDbContext dbContext, int? page, int? pageSize) =>
