@@ -1,17 +1,20 @@
+import { bookApi } from "@/api/book-api";
 import BookCarousel from "@/components/book-carousel";
+import { Col, Container, Row } from "@/components/layouts/app-layout";
 import { Book } from "@/types/Book";
+import { Pagination } from "@/types/Pagination";
 import { useQuery } from "@tanstack/react-query";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback } from "react";
-import { View } from "react-native";
+import { ScrollView } from "react-native";
 
 export default function Index() {
   const router = useRouter();
 
-  const { isPending, error, data, refetch } = useQuery<Book[]>({
+  const { isPending, error, data, refetch } = useQuery<Pagination<Book>>({
     queryKey: ['booksInfo'],
     queryFn: () =>
-      fetch(`http://192.168.1.100:5000/Get/Book/AllInfo?page=1&pageSize=6`).then(res => res.json()),
+      bookApi.fetchBooks(1, 6)
   });
 
   useFocusEffect(
@@ -21,24 +24,50 @@ export default function Index() {
   );
 
   const goToBook = (bookId: number) => {
-        router.push(`/book/${bookId}`);
-    };
+    router.push(`/book/${bookId}`);
+  };
 
   return (
-    <View
+    <ScrollView
       style={{
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
       }}
     >
-      <BookCarousel 
-        data={data ?? []}
-        coverWidth={180}
-        coverHeight={300}
-        itemWidthModifier={0.55}
-        onPress={(book) => {goToBook(book.id)}}
-      />
-    </View>
+      <Container style={{ paddingVertical: 20 }}>
+        <Row>
+          <Col span={12}>
+            <BookCarousel
+              data={data?.data ?? []}
+              coverWidth={120}
+              coverHeight={180}
+              itemWidthModifier={0.35}
+              onPress={(book) => { goToBook(book.id) }}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col span={12}>
+            <BookCarousel
+              data={data?.data ?? []}
+              coverWidth={120}
+              coverHeight={180}
+              itemWidthModifier={0.35}
+              onPress={(book) => { goToBook(book.id) }}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col span={12}>
+            <BookCarousel
+              data={data?.data ?? []}
+              coverWidth={120}
+              coverHeight={180}
+              itemWidthModifier={0.35}
+              onPress={(book) => { goToBook(book.id) }}
+            />
+          </Col>
+        </Row>
+      </Container>
+    </ScrollView>
   );
 }

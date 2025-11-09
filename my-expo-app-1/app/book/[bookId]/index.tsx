@@ -1,3 +1,4 @@
+import { bookApi } from "@/api/book-api";
 import AppButton from "@/components/inputs/app-button";
 import { Col, Container, Row } from "@/components/layouts/app-layout";
 import AppText from "@/components/texts/app-text";
@@ -11,11 +12,12 @@ export default function Index() {
     const { bookId } = useLocalSearchParams<{ bookId: string }>();
 
     const router = useRouter();
+    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
     const { isPending, error, data, refetch } = useQuery<Book>({
-        queryKey: ['book'],
+        queryKey: ['book', bookId],
         queryFn: () =>
-            fetch(`http://192.168.1.100:5000/Get/Book/${bookId}`).then(res => res.json()),
+            bookApi.fetchBook(parseInt(bookId))
     });
 
     const goToPage = (page: number) => {
@@ -33,7 +35,7 @@ export default function Index() {
                             backgroundColor: "grey",
                             borderRadius: 10,
                         }}
-                        source={parseSource(`http://192.168.1.100:5000/Get/Book/${bookId}/1`)}
+                        source={parseSource(`${apiUrl}/Get/Book/${bookId}/1`)}
                     />
                 </Col>
                 <Col span={6}>
@@ -62,7 +64,7 @@ export default function Index() {
                                             backgroundColor: "grey",
                                             borderRadius: 10,
                                         }}
-                                        source={parseSource(`http://192.168.1.100:5000/Get/Book/${bookId}/${index + 1}`)}
+                                        source={parseSource(`${apiUrl}/Get/Book/${bookId}/${index + 1}`)}
                                     />
                                 </TouchableOpacity>
                             </View>

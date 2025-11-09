@@ -29,6 +29,8 @@ const defaultProps = {
 export default function BookCarousel(props: BookCarouselProps) {
     const mergedProps = { ...defaultProps, ...props };
 
+    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+
     const { width } = Dimensions.get("window");
     const VISIBLE_WIDTH = width;
     const ITEM_WIDTH = Math.round(width * mergedProps.itemWidthModifier);
@@ -97,7 +99,7 @@ export default function BookCarousel(props: BookCarouselProps) {
                                 accessibilityLabel={`Open ${item.title}`}
                             >
                                 <Image
-                                    source={parseSource(`http://192.168.1.100:5000/Get/Book/${item.id}/1`)}
+                                    source={parseSource(`${apiUrl}/Get/Book/${item.id}/1`)}
                                     style={[
                                         styles.animatedCover,
                                         { 

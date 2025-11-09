@@ -15,19 +15,19 @@ Directory.CreateDirectory(bookPath);
 var dbFilePath = Path.Combine("./Data", "book.db");
 
 // Delete database and book files if in development
-// if (builder.Environment.IsDevelopment())
-// {
-//     if (File.Exists(dbFilePath))
-//     {
-//         File.Delete(dbFilePath);
-//     }
+if (builder.Environment.IsDevelopment())
+{
+    if (File.Exists(dbFilePath))
+    {
+        File.Delete(dbFilePath);
+    }
 
-//     if (Directory.Exists(bookPath))
-//     {
-//         Directory.Delete(bookPath, recursive: true);
-//         Directory.CreateDirectory(bookPath);
-//     }
-// }
+    if (Directory.Exists(bookPath))
+    {
+        Directory.Delete(bookPath, recursive: true);
+        Directory.CreateDirectory(bookPath);
+    }
+}
 
 builder.Services.AddDbContext<ApiDbContext>(opt => opt.UseSqlite($"Data Source={dbFilePath}"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -165,11 +165,41 @@ async Task<List<Book>> AddBooksFromFolderWithZipsAsync(string folderPath, ApiDbC
 //     Console.Error.WriteLine(ex.Message);
 // }
 
+try
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApiDbContext>();
+
+    int count = 0;
+    List<Book> pData = new();
+
+    while (count < 1000)
+    {
+        var pRow = new Book
+        {
+            StorageGuid = Guid.NewGuid(),
+            Title = $"Placeholder {count + 1}",
+            TotalPages = 40,
+        };
+
+        pData.Add(pRow);
+        count++;
+    }
+
+    await dbContext.AddRangeAsync(pData);
+    await dbContext.SaveChangesAsync();
+
+}
+catch (Exception ex)
+{
+    Console.Error.WriteLine($"Error: {ex.Message}");
+}
+
 // GET
 app.MapGet("/Get/Book/AllInfo", async (ApiDbContext dbContext, int? page, int? pageSize) =>
 {
     var query = dbContext.Books
-    .OrderBy(b => b.Title)
+    .OrderBy(b => b.Id)
     .Select(b => new BookDto
     {
         Id = b.Id,
@@ -187,7 +217,20 @@ app.MapGet("/Get/Book/AllInfo", async (ApiDbContext dbContext, int? page, int? p
     }
 
     var result = await query.ToListAsync();
-    return Results.Ok(result);
+
+    var bookCount = await dbContext.Books.CountAsync();
+    int? lastPage = null;
+    if (pageSize.HasValue && pageSize.Value > 0)
+    {
+        lastPage = (int)Math.Ceiling(bookCount / (double)pageSize.Value);
+    }
+
+    return Results.Ok(new PaginationDto<BookDto>
+    {
+        Data = result,
+        CurrentPage = page,
+        LastPage = lastPage,
+    });
 });
 
 app.MapGet("/Get/Book/{id}", async (ApiDbContext dbContext, int id) =>

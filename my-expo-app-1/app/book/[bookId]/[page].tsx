@@ -9,6 +9,7 @@ export default function Page() {
     const { bookId, page } = useLocalSearchParams<{ bookId: string, page: string }>();
 
     const router = useRouter();
+    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
     const back = () => {
         const toPage = Math.max(1, parseInt(page) - 1);
@@ -48,7 +49,7 @@ export default function Page() {
                     flex: 1,
                     backgroundColor: "black",
                 }}
-                source={parseSource(`http://192.168.1.100:5000/Get/Book/${bookId}/${page}`)}
+                source={parseSource(`${apiUrl}/Get/Book/${bookId}/${page}`)}
                 resizeMode="contain"
                 fadeDuration={0}
             />

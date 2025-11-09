@@ -1,8 +1,10 @@
+import { bookApi } from "@/api/book-api";
 import BookCover from "@/components/book-cover";
 import AppButton from "@/components/inputs/app-button";
 import { Col, Container, Row } from "@/components/layouts/app-layout";
 import AppText from "@/components/texts/app-text";
 import { Book } from "@/types/Book";
+import { Pagination } from "@/types/Pagination";
 import { useQuery } from "@tanstack/react-query";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -31,10 +33,10 @@ export default function Index() {
         })
     ).current;
 
-    const { isPending, error, data, refetch } = useQuery<Book[]>({
-        queryKey: ['booksInfo'],
+    const { isPending, error, data, refetch } = useQuery<Pagination<Book>>({
+        queryKey: ['booksInfo', currentPage],
         queryFn: () =>
-            fetch(`http://192.168.1.100:5000/Get/Book/AllInfo?page=${currentPage}&pageSize=6`).then(res => res.json()),
+            bookApi.fetchBooks(currentPage, 6)
     });
 
     useFocusEffect(
@@ -62,7 +64,7 @@ export default function Index() {
                                 justifyContent: "space-between"
                             }}
                         >
-                            <AppText>Page {currentPage}</AppText>
+                            <AppText>Page {currentPage}, Last page {data?.lastPage}</AppText>
                             <Row style={{ gap: 5 }}>
                                 <AppButton
                                     title="<<"
@@ -96,7 +98,7 @@ export default function Index() {
                         {isPending && <AppText>Loading...</AppText>}
                         {error && <AppText>Error: {String(error)}</AppText>}
                         {data &&
-                            data.map(book => (
+                            data.data.map(book => (
                                 <Col key={book.id} span={6}>
                                     <BookCover height={240} onPress={() => goToBook(book.id)} book={book} />
                                 </Col>

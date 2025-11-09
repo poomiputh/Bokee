@@ -10,6 +10,7 @@ type BookCoverProps = {
 }
 
 export default function BookCover(props: BookCoverProps) {
+    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
     return (
         <TouchableOpacity
             activeOpacity={0.85}
@@ -34,7 +35,7 @@ export default function BookCover(props: BookCoverProps) {
                         width: props.width ?? "100%",
                         height: props.height ?? "100%",
                     }}
-                    source={parseSource(`http://192.168.1.100:5000/Get/Book/${props.book.id}/1`)}
+                    source={parseSource(`${apiUrl}/Get/Book/${props.book.id}/1`)}
                 />
 
                 <View
