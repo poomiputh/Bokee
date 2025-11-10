@@ -36,7 +36,10 @@ export default function Page() {
                     const x = evt.nativeEvent.locationX;
                     if (x < sectionWidth) back();
                     else if (x > sectionWidth * 2) next();
-                    else console.log("Tap middle section");
+                    else {
+                        console.log("Tap middle");
+                        // toggleRootHeader();
+                    };
                 }
             },
         })

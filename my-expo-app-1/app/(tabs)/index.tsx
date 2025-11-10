@@ -35,26 +35,6 @@ export default function Index() {
       }}
     >
       <Container style={{ paddingVertical: 20 }}>
-        {/* Trending */}
-        <Row>
-          <Col span={12}>
-            <AppText style={[styles.titleHeader]}>
-              Trending
-            </AppText>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <BookCarousel
-              data={data?.data ?? []}
-              coverWidth={140}
-              coverHeight={210}
-              itemWidthModifier={0.4}
-              onPress={(book) => { goToBook(book.id) }}
-            />
-          </Col>
-        </Row>
-
         {/* Continue reading */}
         <Row>
           <Col span={12}>
@@ -100,7 +80,7 @@ export default function Index() {
         {/* Feeling lucky? */}
         <Row>
           <Col span={12}>
-            <AppText>
+            <AppText style={[styles.titleHeader]}>
               Feeling lucky?
             </AppText>
           </Col>
