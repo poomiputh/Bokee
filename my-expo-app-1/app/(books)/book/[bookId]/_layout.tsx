@@ -6,7 +6,6 @@ export default function StackLayout() {
       screenOptions={{
         headerShown: false,
         animation: "none",
-        animationTypeForReplace: "pop",
       }}
     >
       <Stack.Screen

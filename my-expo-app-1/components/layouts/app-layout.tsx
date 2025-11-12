@@ -1,26 +1,25 @@
-
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
 type BaseLayoutProps = {
   children?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
-}
+};
 
 type ContainerProps = BaseLayoutProps & {
   fluid?: boolean;
-}
+};
 
 type RowProps = BaseLayoutProps;
 
 type ColProps = BaseLayoutProps & {
-  span?: number;
-}
+  span?: number | "auto";
+};
 
 const Container = ({ children, style, fluid = true }: ContainerProps) => (
   <View
     style={[
       styles.container,
-      { flex: fluid ? 1 : undefined },
+      fluid && { flex: 1 },
       style,
     ]}
   >
@@ -37,15 +36,13 @@ const Row = ({ children, style }: RowProps) => (
 );
 
 const Col = ({ span = 12, children, style }: ColProps) => {
-  const widthPercent = (span / 12) * 100;
+  const isAuto = span === "auto";
+  const widthStyle: ViewStyle = isAuto
+    ? { flexGrow: 0, flexShrink: 0, alignSelf: "flex-start" }
+    : { width: `${(span / 12) * 100}%` as any };
+
   return (
-    <View
-      style={[
-        styles.col,
-        { width: `${widthPercent}%` }
-        , style
-      ]}
-    >
+    <View style={[styles.col, widthStyle, style]}>
       {children}
     </View>
   );
@@ -53,11 +50,12 @@ const Col = ({ span = 12, children, style }: ColProps) => {
 
 const styles = StyleSheet.create({
   container: {
-
+    // Optional base container styling
   },
   row: {
     flexDirection: "row",
     flexWrap: "wrap",
+    alignItems: "flex-start",
   },
   col: {
     padding: 10,

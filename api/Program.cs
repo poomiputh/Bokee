@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
@@ -135,11 +136,14 @@ async Task<List<Book>> AddBooksFromFolderWithZipsAsync(string folderPath, ApiDbC
                 order++;
             }
 
+            DateTime currentUtcNow = DateTime.UtcNow;
             var book = new Book
             {
                 Title = zipFileName,
                 StorageGuid = storageGuid,
-                TotalPages = order - 1
+                TotalPages = order - 1,
+                CreatedDate = currentUtcNow,
+                ModifiedDate = currentUtcNow
             };
 
             await dbContext.Books.AddAsync(book);
@@ -252,18 +256,15 @@ app.MapGet("/Get/Book/{id}", async (ApiDbContext dbContext, int id) =>
     return Results.Ok(result);
 });
 
-app.MapGet("/Get/Book/{id}/{page}", async (ApiDbContext dbContext, int id, int page) =>
+app.MapGet("/Get/Book/{id}/{page}", async (ApiDbContext dbContext, HttpRequest request, HttpResponse response, int id, int page) =>
 {
     var book = await dbContext.Books.FindAsync(id);
     if (book == null)
         return Results.NotFound("Book not found");
 
     var storageGuid = book.StorageGuid;
-
-    // Supported image extensions
     var supportedExts = new[] { ".jpg", ".jpeg", ".png", ".webp" };
 
-    // Try to find the page file
     var foundPath = supportedExts
         .Select(ext => Path.Combine(bookPath, storageGuid.ToString(), $"{page}{ext}"))
         .FirstOrDefault(File.Exists);
@@ -271,10 +272,43 @@ app.MapGet("/Get/Book/{id}/{page}", async (ApiDbContext dbContext, int id, int p
     if (foundPath == null)
         return Results.NotFound($"Image not found for page {page}");
 
-    // Detect MIME type dynamically
+    var fileInfo = new FileInfo(foundPath);
     var provider = new FileExtensionContentTypeProvider();
     if (!provider.TryGetContentType(foundPath, out var contentType))
         contentType = "application/octet-stream";
+
+    // Compute ETag as a hash of file content or last write time
+    string eTag;
+    using (var stream = File.OpenRead(foundPath))
+    {
+        using var md5 = MD5.Create();
+        var hash = md5.ComputeHash(stream);
+        eTag = Convert.ToBase64String(hash);
+    }
+
+    var lastModified = book.ModifiedDate.ToString("R"); // RFC1123
+
+    // Check for revalidation headers
+    if (request.Headers.TryGetValue("If-None-Match", out var inm) && inm == eTag)
+    {
+        response.Headers.ETag = eTag;
+        response.Headers.LastModified = lastModified;
+        return Results.StatusCode(304); // Not Modified
+    }
+
+    if (request.Headers.TryGetValue("If-Modified-Since", out var ims) &&
+        DateTime.TryParse(ims, out var since) &&
+        fileInfo.LastWriteTimeUtc <= since.ToUniversalTime())
+    {
+        response.Headers.ETag = eTag;
+        response.Headers.LastModified = lastModified;
+        return Results.StatusCode(304);
+    }
+
+    // Set cache headers
+    response.Headers.CacheControl = "public, no-cache"; // allows ETag revalidation
+    response.Headers.ETag = eTag;
+    response.Headers.LastModified = lastModified;
 
     return Results.File(foundPath, contentType);
 });
@@ -332,11 +366,14 @@ app.MapPost("/Upload/Book", async (ApiDbContext dbContext, HttpRequest request) 
             order++;
         }
 
+        DateTime currentUtcNow = DateTime.UtcNow;
         await dbContext.Books.AddAsync(new Book
         {
             Title = zipFileName,
             StorageGuid = storageGuid,
-            TotalPages = order - 1
+            TotalPages = order - 1,
+            CreatedDate = currentUtcNow,
+            ModifiedDate = currentUtcNow
         });
         await dbContext.SaveChangesAsync();
 

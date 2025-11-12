@@ -9,6 +9,7 @@ export const lightTheme = {
         background: "#f0f0f0ff",
         card: "#ffffffff",
         text: "#000000ff",
+        textDescription: "#585858ff",
     },
 };
 
@@ -20,5 +21,6 @@ export const darkTheme = {
         background: "#161616ff",
         card: "#222222ff",
         text: "#FFFFFF",
+        textDescription: "#c2c2c2ff",
     },
 };

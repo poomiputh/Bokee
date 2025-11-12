@@ -23,7 +23,7 @@ function InnerLayout() {
           drawerStyle: {
             width: 240
           },
-          drawerType: "slide"
+          drawerType: "front"
         }}
       >
         <Drawer.Screen

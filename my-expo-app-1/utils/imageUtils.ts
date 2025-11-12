@@ -6,7 +6,8 @@ const parseSource = (src?: string, useCache?: boolean): ImageSourcePropType => {
     if (typeof src === "number") {
         return src; // local require()
     } else {
-        return { uri: src, cache: useCache ? "only-if-cached" : "reload" }; // remote URL
+        // return { uri: src, cache: useCache ? "only-if-cached" : "reload" }; // remote URL
+        return { uri: src}; // remote URL
     }
 };
 

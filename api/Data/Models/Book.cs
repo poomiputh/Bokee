@@ -5,5 +5,6 @@ public class Book
     public required string Title { get; set; }
     public string? Description { get; set; }
     public int TotalPages { get; set; }
-
+    public DateTime CreatedDate { get; set; }
+    public DateTime ModifiedDate { get; set; }
 }
