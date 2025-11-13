@@ -10,12 +10,12 @@ export const bookApi = {
 
     if (!page || !pageSize) pageSize = 6;
 
-    const url = `${apiUrl}/Get/Book/AllInfo?${params.toString()}`;
+    const url = `${apiUrl}/api/Book/GetBooks?${params.toString()}`;
     console.log("Fetching from :", url);
     return fetch(url).then(res => res.json());
   },
   fetchBook: async (bookId: number): Promise<Book> => {
-    const url = `${apiUrl}/Get/Book/${bookId}`;
+    const url = `${apiUrl}/api/Book/GetBook/${bookId}`;
     console.log("Fetching from :", url);
     return fetch(url).then(res => res.json());
   }

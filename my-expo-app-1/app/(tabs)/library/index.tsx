@@ -25,9 +25,9 @@ export default function Index() {
         })
     ).current;
     const { isPending, error, data, refetch } = useQuery<Pagination<Book>>({
-        queryKey: ['booksInfo', currentPage, 6],
+        queryKey: ['booksInfo', currentPage, 12],
         queryFn: () =>
-            bookApi.fetchBooks(currentPage, 6),
+            bookApi.fetchBooks(currentPage, 12),
     });
 
     const next = () => {
@@ -53,24 +53,34 @@ export default function Index() {
                         <View
                             style={{
                                 flexDirection: "row",
-                                justifyContent: "space-between"
+                                justifyContent: "center",
+                                gap: 5
                             }}
                         >
-                            <AppText>Page {currentPage}, Last page {data?.lastPage}</AppText>
-                            <Row style={{ gap: 5 }}>
-                                <AppButton
-                                    title="<"
-                                    fitContent
-                                    onPress={prev}
-                                    style={styles.navigationButton}
-                                ></AppButton>
-                                <AppButton
-                                    title=">"
-                                    fitContent
-                                    onPress={next}
-                                    style={styles.navigationButton}
-                                ></AppButton>
-                            </Row>
+                            <AppButton
+                                title="1"
+                                fitContent
+                                onPress={() => { setCurrentPage(1); }}
+                                style={styles.navigationButton}
+                            ></AppButton>
+                            <AppButton
+                                title="<"
+                                fitContent
+                                onPress={prev}
+                                style={styles.navigationButton}
+                            ></AppButton>
+                            <AppButton
+                                title=">"
+                                fitContent
+                                onPress={next}
+                                style={styles.navigationButton}
+                            ></AppButton>
+                            <AppButton
+                                title={(data?.lastPage ?? 1).toString()}
+                                fitContent
+                                onPress={() => { setCurrentPage(data?.lastPage ?? 1); }}
+                                style={styles.navigationButton}
+                            ></AppButton>
                         </View>
                     </Col>
                 </Row>
@@ -92,7 +102,7 @@ export default function Index() {
                     {/* Pagination actions */}
                     <Row style={{ gap: 5, justifyContent: "center", marginBottom: 15 }}>
                         <AppButton
-                            title="<<"
+                            title="1"
                             fitContent
                             onPress={() => { setCurrentPage(1); }}
                             style={styles.navigationButton}
@@ -110,7 +120,7 @@ export default function Index() {
                             style={styles.navigationButton}
                         ></AppButton>
                         <AppButton
-                            title=">>"
+                            title={(data?.lastPage ?? 1).toString()}
                             fitContent
                             onPress={() => { setCurrentPage(data?.lastPage ?? 1); }}
                             style={styles.navigationButton}

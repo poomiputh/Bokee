@@ -1,4 +1,4 @@
-namespace Data.Models.Book
+namespace Data.Models
 {
     public class Book
     {
@@ -9,5 +9,8 @@ namespace Data.Models.Book
         public int TotalPages { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
+
+        public virtual ICollection<BookProgress> UserBookProgresses { get; set; } = default!;
+        public virtual ICollection<SavedBook> UserSavedBooks { get; set; } = default!;
     }
 }

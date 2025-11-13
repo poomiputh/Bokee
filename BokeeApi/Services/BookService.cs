@@ -3,24 +3,32 @@ using System.Security.Cryptography;
 using Data;
 using Data.DTOs;
 using Data.DTOs.Book;
-using Data.Models.Book;
+using Data.Models;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 
 namespace Services
 {
-    public class BookService(
-        BokeeDbContext dbContext,
-        IConfiguration config,
-        ILogger logger,
-        IWebHostEnvironment env
-    ) : IBookService
+    public class BookService : IBookService
     {
-        private readonly BokeeDbContext _dbContext = dbContext;
-        private readonly IConfiguration _config = config;
-        private readonly ILogger _logger = logger;
-        private readonly string _wwwRootPath = env.WebRootPath;
+        private readonly BokeeDbContext _dbContext;
+        private readonly IConfiguration _config;
+        private readonly ILogger _logger;
+        private readonly string _wwwRootPath;
+
+        public BookService(
+            BokeeDbContext dbContext,
+            IConfiguration config,
+            ILogger<BookService> logger,
+            IWebHostEnvironment env
+        )
+        {
+            _dbContext = dbContext;
+            _config = config;
+            _logger = logger;
+            _wwwRootPath = env.WebRootPath;
+        }
 
         public async Task<PaginationDto<BookDto>> GetBooks(int? page, int? pageSize)
         {
@@ -69,7 +77,9 @@ namespace Services
                 Title = result.Title,
                 StorageGuid = result.StorageGuid,
                 Description = result.Description,
-                TotalPages = result.TotalPages
+                TotalPages = result.TotalPages,
+                CreatedDate = result.CreatedDate,
+                ModifiedDate = result.ModifiedDate
             };
         }
 
@@ -104,39 +114,6 @@ namespace Services
             var provider = new FileExtensionContentTypeProvider();
             if (!provider.TryGetContentType(foundPath, out var contentType))
                 contentType = "application/octet-stream";
-
-            // // Compute ETag as a hash of file content or last write time
-            // string eTag;
-            // using (var stream = File.OpenRead(foundPath))
-            // {
-            //     using var md5 = MD5.Create();
-            //     var hash = md5.ComputeHash(stream);
-            //     eTag = Convert.ToBase64String(hash);
-            // }
-
-            // var lastModified = book.ModifiedDate.ToString("R"); // RFC1123
-
-            // // Check for revalidation headers
-            // if (request.Headers.TryGetValue("If-None-Match", out var inm) && inm == eTag)
-            // {
-            //     response.Headers.ETag = eTag;
-            //     response.Headers.LastModified = lastModified;
-            //     return Results.StatusCode(304); // Not Modified
-            // }
-
-            // if (request.Headers.TryGetValue("If-Modified-Since", out var ims) &&
-            //     DateTime.TryParse(ims, out var since) &&
-            //     fileInfo.LastWriteTimeUtc <= since.ToUniversalTime())
-            // {
-            //     response.Headers.ETag = eTag;
-            //     response.Headers.LastModified = lastModified;
-            //     return Results.StatusCode(304);
-            // }
-
-            // // Set cache headers
-            // response.Headers.CacheControl = "public, no-cache"; // allows ETag revalidation
-            // response.Headers.ETag = eTag;
-            // response.Headers.LastModified = lastModified;
 
             var fileBytes = await File.ReadAllBytesAsync(foundPath);
 
@@ -256,7 +233,16 @@ namespace Services
 
         public async Task<string> ComputeImageEtag(string imagePath)
         {
-            return "";
+            // Compute ETag as a hash of file content or last write time
+            string eTag;
+            using (var stream = File.OpenRead(imagePath))
+            {
+                using var md5 = MD5.Create();
+                var hash = md5.ComputeHash(stream);
+                eTag = Convert.ToBase64String(hash);
+            }
+
+            return eTag;
         }
     }
 }

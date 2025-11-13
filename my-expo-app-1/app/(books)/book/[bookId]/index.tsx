@@ -36,7 +36,7 @@ export default function Index() {
                                     backgroundColor: "grey",
                                     borderRadius: 10,
                                 }}
-                                source={parseSource(`${apiUrl}/Get/Book/${bookId}/1`)}
+                                source={parseSource(`${apiUrl}/api/Book/GetPage/${bookId}/1`)}
                             />
                         </Col>
                         <Col span={6}>
@@ -66,7 +66,7 @@ export default function Index() {
                                 backgroundColor: "grey",
                                 borderRadius: 10,
                             }}
-                            source={parseSource(`${apiUrl}/Get/Book/${bookId}/${index + 1}`)}
+                            source={parseSource(`${apiUrl}/api/Book/GetPage/${bookId}/${index + 1}`)}
                         />
                     </TouchableOpacity>
                 </View>

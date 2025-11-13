@@ -100,7 +100,7 @@ export default function BookCarousel(props: BookCarouselProps) {
                                 accessibilityLabel={`Open ${item.title}`}
                             >
                                 <Image
-                                    source={parseSource(`${apiUrl}/Get/Book/${item.id}/1`)}
+                                    source={parseSource(`${apiUrl}/api/Book/GetPage/${item.id}/1`)}
                                     style={[
                                         styles.animatedCover,
                                         { 

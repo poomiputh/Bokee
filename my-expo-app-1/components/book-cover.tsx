@@ -35,7 +35,7 @@ export default function BookCover(props: BookCoverProps) {
                         width: props.width ?? "100%",
                         height: props.height ?? "100%",
                     }}
-                    source={parseSource(`${apiUrl}/Get/Book/${props.book.id}/1`)}
+                    source={parseSource(`${apiUrl}/api/Book/GetPage/${props.book.id}/1`)}
                 />
 
                 <View

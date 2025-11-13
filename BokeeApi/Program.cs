@@ -1,5 +1,9 @@
+using System.Text;
 using Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Services;
 using Services.Interfaces;
 
@@ -11,12 +15,39 @@ builder.Services.AddDbContext<BokeeDbContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
-// Add services to the container.
+
+#region JWT
+var jwtConfig = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtConfig["Key"]);
+
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtConfig["Issuer"],
+            ValidAudience = jwtConfig["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(key)
+        };
+    });
+
+builder.Services.AddAuthorization();
+#endregion
 
 builder.Services.AddControllers();
 
-builder.Services.AddTransient<ILogger, Logger<IBookService>>();
-builder.Services.AddTransient<IBookService, BookService>();
+builder.Services.AddScoped<ILogger, Logger<IBookService>>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IBookService, BookService>();
 
 builder.Services.AddCors(options =>
 {
@@ -60,8 +91,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().RequireAuthorization();;
 
 app.Run();
