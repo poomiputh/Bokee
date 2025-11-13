@@ -31,11 +31,14 @@ namespace Services
                  .FirstOrDefaultAsync();
             if (user != null) return null;
 
+            DateTime utcNow = DateTime.UtcNow;
             User newUser = new User
             {
                 Username = userData.Username,
                 Email = userData.Email,
-                Password = HashPassword(userData.Password)
+                Password = HashPassword(userData.Password),
+                CreatedDate = utcNow,
+                ModifiedDate = utcNow
             };
 
             await _dbContext.Users.AddAsync(newUser);
