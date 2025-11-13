@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Security.Cryptography;
 using Data;
 using Data.DTOs;
 using Data.DTOs.Book;
@@ -104,9 +105,66 @@ namespace Services
             if (!provider.TryGetContentType(foundPath, out var contentType))
                 contentType = "application/octet-stream";
 
+            // // Compute ETag as a hash of file content or last write time
+            // string eTag;
+            // using (var stream = File.OpenRead(foundPath))
+            // {
+            //     using var md5 = MD5.Create();
+            //     var hash = md5.ComputeHash(stream);
+            //     eTag = Convert.ToBase64String(hash);
+            // }
+
+            // var lastModified = book.ModifiedDate.ToString("R"); // RFC1123
+
+            // // Check for revalidation headers
+            // if (request.Headers.TryGetValue("If-None-Match", out var inm) && inm == eTag)
+            // {
+            //     response.Headers.ETag = eTag;
+            //     response.Headers.LastModified = lastModified;
+            //     return Results.StatusCode(304); // Not Modified
+            // }
+
+            // if (request.Headers.TryGetValue("If-Modified-Since", out var ims) &&
+            //     DateTime.TryParse(ims, out var since) &&
+            //     fileInfo.LastWriteTimeUtc <= since.ToUniversalTime())
+            // {
+            //     response.Headers.ETag = eTag;
+            //     response.Headers.LastModified = lastModified;
+            //     return Results.StatusCode(304);
+            // }
+
+            // // Set cache headers
+            // response.Headers.CacheControl = "public, no-cache"; // allows ETag revalidation
+            // response.Headers.ETag = eTag;
+            // response.Headers.LastModified = lastModified;
+
             var fileBytes = await File.ReadAllBytesAsync(foundPath);
 
             return (fileBytes, contentType);
+        }
+
+        public async Task<string?> GetPagePath(int bookId, int page)
+        {
+            var book = await _dbContext.Books.FindAsync(bookId);
+            if (book == null) return null;
+
+            var storageGuid = book.StorageGuid;
+            var supportedExts = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+
+            var storageBasePath = _config["Storage:Base"];
+            var storageBookPath = _config["Storage:Book"];
+            if (storageBasePath == null || storageBookPath == null)
+            {
+                _logger.LogError("Invalid book storage path.");
+                return null;
+            }
+            var bookPath = Path.Combine(_wwwRootPath, storageBasePath, storageBookPath);
+
+            var foundPath = supportedExts
+                .Select(ext => Path.Combine(bookPath, storageGuid.ToString(), $"{page}{ext}"))
+                .FirstOrDefault(File.Exists);
+
+            return foundPath;
         }
 
         public async Task AddBooks(string folderPath)
@@ -194,6 +252,11 @@ namespace Services
                     throw;
                 }
             }
+        }
+
+        public async Task<string> ComputeImageEtag(string imagePath)
+        {
+            return "";
         }
     }
 }

@@ -8,6 +8,8 @@ namespace Services.Interfaces
         public Task<PaginationDto<BookDto>> GetBooks(int? page, int? pageSize);
         public Task<BookDto?> GetBook(int bookId);
         public Task<(byte[] Data, string ContentType)?> GetPage(int bookId, int page);
+        public Task<string?> GetPagePath(int bookId, int page);
         public Task AddBooks(string folderPath);
+        public Task<string> ComputeImageEtag(string imagePath);
     }
 }
