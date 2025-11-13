@@ -35,6 +35,20 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// try
+// {
+//     using var scope = app.Services.CreateScope();
+//     var dbContext = scope.ServiceProvider.GetRequiredService<BokeeDbContext>();
+//     var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+//     var bookService = scope.ServiceProvider.GetRequiredService<IBookService>();
+//     var seedBookPath = Path.Combine(env.WebRootPath, "SeedStorage", "Book");
+//     await bookService.AddBooks(seedBookPath);
+// }
+// catch (Exception ex)
+// {
+//     Console.WriteLine(ex.Message);
+// }
+
 app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.

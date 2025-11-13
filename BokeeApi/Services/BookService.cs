@@ -1,6 +1,8 @@
+using System.IO.Compression;
 using Data;
 using Data.DTOs;
 using Data.DTOs.Book;
+using Data.Models.Book;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
@@ -10,12 +12,14 @@ namespace Services
     public class BookService(
         BokeeDbContext dbContext,
         IConfiguration config,
-        ILogger logger
+        ILogger logger,
+        IWebHostEnvironment env
     ) : IBookService
     {
         private readonly BokeeDbContext _dbContext = dbContext;
         private readonly IConfiguration _config = config;
         private readonly ILogger _logger = logger;
+        private readonly string _wwwRootPath = env.WebRootPath;
 
         public async Task<PaginationDto<BookDto>> GetBooks(int? page, int? pageSize)
         {
@@ -83,7 +87,7 @@ namespace Services
                 _logger.LogError("Invalid book storage path.");
                 return null;
             }
-            var bookPath = Path.Combine(storageBasePath, storageBookPath);
+            var bookPath = Path.Combine(_wwwRootPath, storageBasePath, storageBookPath);
 
             var foundPath = supportedExts
                 .Select(ext => Path.Combine(bookPath, storageGuid.ToString(), $"{page}{ext}"))
@@ -103,6 +107,93 @@ namespace Services
             var fileBytes = await File.ReadAllBytesAsync(foundPath);
 
             return (fileBytes, contentType);
+        }
+
+        public async Task AddBooks(string folderPath)
+        {
+            if (string.IsNullOrWhiteSpace(folderPath) || !Directory.Exists(folderPath))
+                throw new DirectoryNotFoundException("Folder path is invalid or does not exist.");
+
+            var zipFiles = Directory.GetFiles(folderPath, "*.zip", SearchOption.AllDirectories)
+                .OrderBy(f => f)
+                .ToList();
+
+            if (!zipFiles.Any())
+                throw new InvalidOperationException("No ZIP files found in the folder.");
+
+            var addedBooks = new List<Book>();
+
+            var storageBasePath = _config["Storage:Base"];
+            var storageBookPath = _config["Storage:Book"];
+            if (storageBasePath == null || storageBookPath == null)
+            {
+                throw new DirectoryNotFoundException("Invalid book storage path.");
+            }
+            var bookPath = Path.Combine(_wwwRootPath, storageBasePath, storageBookPath);
+
+            foreach (var zipPath in zipFiles)
+            {
+                var zipFileName = Path.GetFileNameWithoutExtension(zipPath);
+                var storageGuid = Guid.NewGuid();
+                var extractFolder = Path.Combine(bookPath, storageGuid.ToString());
+                Directory.CreateDirectory(extractFolder);
+
+                try
+                {
+                    using var archive = new ZipArchive(File.OpenRead(zipPath), ZipArchiveMode.Read);
+
+                    var imageEntries = archive.Entries
+                        .Where(e => !string.IsNullOrEmpty(e.Name))
+                        .OrderBy(e => e.Name)
+                        .ToList();
+
+                    if (!imageEntries.All(e =>
+                        e.Name.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                        e.Name.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+                        e.Name.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+                        e.Name.EndsWith(".gif", StringComparison.OrdinalIgnoreCase) ||
+                        e.Name.EndsWith(".webp", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        string errorMessage = $"ZIP '{zipPath}' contains non-image files.";
+                        // throw new InvalidOperationException(errorMessage);
+                        Console.WriteLine(errorMessage);
+                        continue;
+                    }
+
+                    int order = 1;
+                    foreach (var entry in imageEntries)
+                    {
+                        var ext = Path.GetExtension(entry.Name);
+                        var newName = $"{order}{ext}";
+                        var fullPath = Path.Combine(extractFolder, newName);
+
+                        Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
+                        entry.ExtractToFile(fullPath, overwrite: true);
+                        order++;
+                    }
+
+                    DateTime currentUtcNow = DateTime.UtcNow;
+                    var book = new Book
+                    {
+                        Title = zipFileName,
+                        StorageGuid = storageGuid,
+                        TotalPages = order - 1,
+                        CreatedDate = currentUtcNow,
+                        ModifiedDate = currentUtcNow
+                    };
+
+                    await _dbContext.Books.AddAsync(book);
+                    await _dbContext.SaveChangesAsync();
+                    addedBooks.Add(book);
+                }
+                catch
+                {
+                    if (Directory.Exists(extractFolder))
+                        Directory.Delete(extractFolder, recursive: true);
+
+                    throw;
+                }
+            }
         }
     }
 }
