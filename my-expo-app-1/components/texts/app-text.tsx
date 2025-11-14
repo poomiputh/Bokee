@@ -33,6 +33,7 @@ export default function AppText(props: AppTextProps) {
                 style={[
                     {
                         color: theme.colors.text,
+                        alignSelf: "center"
                     },
                     props.style,
                 ]}
