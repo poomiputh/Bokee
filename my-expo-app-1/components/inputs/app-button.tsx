@@ -1,5 +1,6 @@
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { ButtonProps, Pressable, StyleProp, StyleSheet, Text, ViewStyle } from "react-native";
+import { ButtonProps, Pressable, StyleProp, StyleSheet, ViewStyle } from "react-native";
+import AppText from "../texts/app-text";
 
 export type AppButtonProps = ButtonProps & {
   fitContent?: boolean;
@@ -45,11 +46,11 @@ export default function AppButton(props: AppButtonProps) {
         props.style
       ]}
     >
-      <Text
+      <AppText
         style={styles.buttonText}
       >
         {props.title}
-      </Text>
+      </AppText>
     </Pressable>
   );
 }

@@ -39,7 +39,7 @@ export default function Index() {
     };
 
     const goToBook = (bookId: number) => {
-        router.push(`/book/${bookId}`);
+        router.navigate(`/book/${bookId}`);
     };
 
     return (
@@ -59,7 +59,6 @@ export default function Index() {
                         >
                             <AppButton
                                 title="1"
-                                fitContent
                                 onPress={() => { setCurrentPage(1); }}
                                 style={styles.navigationButton}
                             ></AppButton>

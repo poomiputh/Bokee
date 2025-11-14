@@ -1,3 +1,4 @@
+import { axiosClient } from "@/api/axios-client/axios-client";
 import { ImageSourcePropType } from "react-native";
 
 const parseSource = (src?: string, useCache?: boolean): ImageSourcePropType => {
@@ -7,7 +8,12 @@ const parseSource = (src?: string, useCache?: boolean): ImageSourcePropType => {
         return src; // local require()
     } else {
         // return { uri: src, cache: useCache ? "only-if-cached" : "reload" }; // remote URL
-        return { uri: src}; // remote URL
+        return {
+            uri: src,
+            headers: {
+                Authorization: axiosClient.defaults.headers.common['Authorization']?.toString() ?? ""
+            }
+        }; // remote URL
     }
 };
 

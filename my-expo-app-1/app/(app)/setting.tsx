@@ -1,4 +1,3 @@
-import AppButton from "@/components/inputs/app-button";
 import { Col, Container, Row } from "@/components/layouts/app-layout";
 import AppText from "@/components/texts/app-text";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -69,26 +68,6 @@ export default function Setting() {
                 value={isEnabled}
               />
             </AppText>
-          </Col>
-        </Row>
-
-        {/* Account */}
-        <Row style={{ justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: theme.colors.textDescription, marginBottom: 10}}>
-          <Col span={"auto"}>
-            <AppText style={styles.titleHeader}>
-              Account
-            </AppText>
-          </Col>
-        </Row>
-
-        <Row style={{ justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: theme.colors.textDescription, marginBottom: 10}}>
-          <Col span={"auto"}>
-            <AppButton 
-              title="Logout"
-              onPress={() => {
-                logout();
-              }}
-            />
           </Col>
         </Row>
 

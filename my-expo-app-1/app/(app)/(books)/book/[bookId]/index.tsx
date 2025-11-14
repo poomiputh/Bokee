@@ -5,16 +5,17 @@ import AppText from "@/components/texts/app-text";
 import { Book } from "@/types/Book";
 import { parseSource } from "@/utils/imageUtils";
 import { useQuery } from "@tanstack/react-query";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { FlatList, Image, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
     const { bookId } = useLocalSearchParams<{ bookId: string }>();
 
+    const navigation = useNavigation();
     const router = useRouter();
     const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-    const { isPending, error, data, refetch } = useQuery<Book>({
+    const { isPending, data } = useQuery<Book>({
         queryKey: ['book', bookId],
         queryFn: () =>
             bookApi.fetchBook(parseInt(bookId))
@@ -23,6 +24,14 @@ export default function Index() {
     const goToPage = (page: number) => {
         router.push(`/book/${bookId}/${page}`)
     };
+
+    // useEffect(() => {
+    //     if (!isPending) {
+    //         navigation.setOptions({
+    //             title: "My Dynamic Header",
+    //         });
+    //     }
+    // }, [isPending]);
 
     return (
         <FlatList

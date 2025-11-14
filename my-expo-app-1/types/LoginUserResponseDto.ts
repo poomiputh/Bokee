@@ -1,6 +1,6 @@
 import { User } from "./User";
 
-export type LoginUserResponse = {
+export type LoginUserResponseDto = {
     user: User;
     token: string;
 };

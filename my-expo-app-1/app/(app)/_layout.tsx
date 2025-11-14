@@ -1,4 +1,6 @@
 import { useAppTheme } from "@/hooks/useAppTheme";
+import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { ThemeProvider as NavThemeProvider } from "@react-navigation/native";
 import { useSegments } from "expo-router";
 import { Drawer } from 'expo-router/drawer';
@@ -7,8 +9,10 @@ export default function AppLayout() {
   const { theme } = useAppTheme();
 
   const segments = useSegments();
+  console.log(segments);
   const pathToHide: string[] = [
-    "(books)/book/[bookId]/[page]"
+    "(app)/(books)/book/[bookId]/[page]",
+    "(app)/(books)/book/[bookId]"
   ];
   const hideHeader = pathToHide.includes(segments.join("/"));
 
@@ -17,7 +21,8 @@ export default function AppLayout() {
       <Drawer
         backBehavior="history"
         screenOptions={{
-          headerTitle: 'Bokee',
+          // headerTitle: 'Bokee :^)',
+          headerSearchBarOptions: {},
           headerShown: !hideHeader,
           drawerStyle: {
             width: 240
@@ -30,6 +35,7 @@ export default function AppLayout() {
           options={{
             drawerLabel: 'Home',
             title: 'Home',
+            drawerIcon: ({ color }) => <MaterialIcons size={28} name="home-filled" color={color} />
           }}
         />
         <Drawer.Screen
@@ -37,6 +43,7 @@ export default function AppLayout() {
           options={{
             drawerLabel: 'Setting',
             title: 'Setting',
+            drawerIcon: ({ color }) => <Ionicons name="settings-sharp" size={28} color={color} />
           }}
         />
         <Drawer.Screen

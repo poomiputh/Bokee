@@ -4,14 +4,14 @@ export default function StackLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
         animation: "none",
       }}
     >
       <Stack.Screen
         name="index"
         options={{
-          title: "Details",
+          title: "Book Details",
         }}
       />
       <Stack.Screen
