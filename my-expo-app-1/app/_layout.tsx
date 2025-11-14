@@ -1,66 +1,52 @@
-import { ThemeProvider, useAppTheme } from "@/theme/theme-context";
-import { ThemeProvider as NavThemeProvider } from "@react-navigation/native";
+import { SessionProvider } from "@/context/auth-context";
+import { ThemeProvider } from "@/context/theme-context";
+import { useSession } from "@/hooks/useSession";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useSegments } from "expo-router";
-import { Drawer } from 'expo-router/drawer';
+import { SplashScreen, Stack } from "expo-router";
 
-function InnerLayout() {
-  const { theme } = useAppTheme();
+SplashScreen.preventAutoHideAsync();
 
-  const segments = useSegments();
-  const pathToHide: string[] = [
-    "(books)/book/[bookId]/[page]"
-  ];
-  const hideHeader = pathToHide.includes(segments.join("/"));
+function SplashScreenController() {
+  const {isLoading} = useSession();
+
+  if (!isLoading) {
+    SplashScreen.hide();
+  }
+
+  return null;
+}
+
+function RootNavigator() {
+  const { session } = useSession();
 
   return (
-    <NavThemeProvider value={theme}>
-      <Drawer
-        backBehavior="history"
-        screenOptions={{
-          headerTitle: 'Bokee',
-          headerShown: !hideHeader,
-          drawerStyle: {
-            width: 240
-          },
-          drawerType: "front"
-        }}
-      >
-        <Drawer.Screen
-          name="(tabs)"
-          options={{
-            drawerLabel: 'Home',
-            title: 'Home',
-          }}
-        />
-        <Drawer.Screen
-          name="setting"
-          options={{
-            drawerLabel: 'Setting',
-            title: 'Setting',
-          }}
-        />
-        <Drawer.Screen
-          name="(books)/book/[bookId]"
-          options={{
-            drawerLabel: '',
-            title: '',
-            drawerItemStyle: { display: 'none' }
-          }}
-        />
-      </Drawer>
-    </NavThemeProvider>
+    <Stack
+      screenOptions={{
+        headerShown: false
+      }}
+    >
+      <Stack.Protected guard={!!session}>
+        <Stack.Screen name="(app)" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={!session}>
+        <Stack.Screen name="login" />
+      </Stack.Protected>
+    </Stack>
   );
 }
 
-export default function StackLayout() {
-  const queryClient = new QueryClient()
+export default function RootLayout() {
+  const queryClient = new QueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <InnerLayout />
-      </ThemeProvider>
+      <SessionProvider>
+        <ThemeProvider>
+          <SplashScreenController />
+          <RootNavigator />
+        </ThemeProvider>
+      </SessionProvider>
     </QueryClientProvider >
   );
 }

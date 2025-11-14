@@ -1,8 +1,8 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { useColorScheme } from "react-native";
-import { darkTheme, lightTheme } from "./colors";
+import { darkTheme, lightTheme } from "../theme/colors";
 
-const ThemeContext = createContext({
+export const ThemeContext = createContext({
     theme: lightTheme,
     toggleTheme: () => { },
     rootHeaderShown: true,
@@ -29,5 +29,3 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
         </ThemeContext.Provider>
     );
 };
-
-export const useAppTheme = () => useContext(ThemeContext);

@@ -1,12 +1,15 @@
+import AppButton from "@/components/inputs/app-button";
 import { Col, Container, Row } from "@/components/layouts/app-layout";
 import AppText from "@/components/texts/app-text";
-import { useAppTheme } from "@/theme/theme-context";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { useSession } from "@/hooks/useSession";
 import { useState } from "react";
 import { StyleSheet, Switch } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function Setting() {
   const { theme } = useAppTheme();
+  const { logout } = useSession();
 
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
@@ -28,6 +31,7 @@ export default function Setting() {
     <ScrollView>
       <Container style={{ padding: 15 }}>
 
+        {/* General */}
         <Row style={{ justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: theme.colors.textDescription, marginBottom: 10}}>
           <Col span={"auto"}>
             <AppText style={styles.titleHeader}>
@@ -68,6 +72,27 @@ export default function Setting() {
           </Col>
         </Row>
 
+        {/* Account */}
+        <Row style={{ justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: theme.colors.textDescription, marginBottom: 10}}>
+          <Col span={"auto"}>
+            <AppText style={styles.titleHeader}>
+              Account
+            </AppText>
+          </Col>
+        </Row>
+
+        <Row style={{ justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: theme.colors.textDescription, marginBottom: 10}}>
+          <Col span={"auto"}>
+            <AppButton 
+              title="Logout"
+              onPress={() => {
+                logout();
+              }}
+            />
+          </Col>
+        </Row>
+
+        {/* Help */}
         <Row style={{ justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: theme.colors.textDescription, marginBottom: 10}}>
           <Col span={"auto"}>
             <AppText style={styles.titleHeader}>
@@ -76,6 +101,7 @@ export default function Setting() {
           </Col>
         </Row>
 
+        {/* Send feedback */}
         <Row style={{ justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: theme.colors.textDescription, marginBottom: 10}}>
           <Col span={"auto"}>
             <AppText style={styles.titleHeader}>
@@ -84,6 +110,7 @@ export default function Setting() {
           </Col>
         </Row>
 
+        {/* Terms of Service */}
         <Row style={{ justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: theme.colors.textDescription, marginBottom: 10}}>
           <Col span={"auto"}>
             <AppText style={styles.titleHeader}>
@@ -92,6 +119,7 @@ export default function Setting() {
           </Col>
         </Row>
 
+        {/* About */}
         <Row style={{ justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: theme.colors.textDescription, marginBottom: 10}}>
           <Col span={"auto"}>
             <AppText style={styles.titleHeader}>

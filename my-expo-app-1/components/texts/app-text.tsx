@@ -1,4 +1,4 @@
-import { useAppTheme } from "@/theme/theme-context";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { StyleProp, Text, TextStyle } from "react-native";
 
 type AppTextProps = {

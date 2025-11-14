@@ -1,4 +1,4 @@
-import { useAppTheme } from "@/theme/theme-context";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { ButtonProps, Pressable, StyleProp, StyleSheet, Text, ViewStyle } from "react-native";
 
 export type AppButtonProps = ButtonProps & {

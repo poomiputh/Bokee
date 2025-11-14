@@ -47,7 +47,7 @@ namespace Services
             return newUser.Id;
         }
 
-        public async Task<string?> LoginUser(LoginUserDto userData)
+        public async Task<LoginUserResponseDto?> LoginUser(LoginUserDto userData)
         {
             User? user = await _dbContext.Users
                 .Where(u => u.Username == userData.UserIdentifier || u.Email == userData.UserIdentifier)
@@ -59,7 +59,15 @@ namespace Services
 
             var token = GenerateToken(user.Id, user.Username);
 
-            return token;
+            return new LoginUserResponseDto
+            {
+                User = new UserDto
+                {
+                    Username = user.Username,
+                    Email = user.Email
+                },
+                Token = token
+            };
         }
 
         public string HashPassword(string password)
@@ -82,10 +90,10 @@ namespace Services
 
             var claims = new[]
             {
-            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new Claim(JwtRegisteredClaimNames.UniqueName, username),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+                new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, username),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
             var token = new JwtSecurityToken(
                 issuer: jwtConfig["Issuer"],
