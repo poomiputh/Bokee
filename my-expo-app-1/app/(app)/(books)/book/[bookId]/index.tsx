@@ -1,6 +1,7 @@
 import { bookApi } from "@/api/book-api";
 import AppButton from "@/components/inputs/app-button";
 import { Col, Container, Row } from "@/components/layouts/app-layout";
+import Separator from "@/components/layouts/separator";
 import AppText from "@/components/texts/app-text";
 import { Book } from "@/types/Book";
 import { parseSource } from "@/utils/imageUtils";
@@ -62,6 +63,7 @@ export default function Index() {
                             />
                         </Col>
                     </Row>
+                    <Separator />
                 </Container>
             }
             columnWrapperStyle={{

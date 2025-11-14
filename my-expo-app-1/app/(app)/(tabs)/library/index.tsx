@@ -14,7 +14,7 @@ export default function Index() {
     const router = useRouter();
 
     const [currentPage, setCurrentPage] = useState(1);
-    
+
     const panResponder = useRef(
         PanResponder.create({
             onMoveShouldSetPanResponder: (_, gestureState) =>
@@ -103,15 +103,20 @@ export default function Index() {
                 {/* Content */}
                 <View {...panResponder.panHandlers} style={{ flex: 1, justifyContent: "space-between" }}>
                     {/* Book covers */}
-                    <Row>
-                        {isPending && <ActivityIndicator />}
-                        {error && <AppText>Error: {String(error)}</AppText>}
-                        {data &&
-                            data.data.map(book => (
+                    <Row style={{ flex: 1 }}>
+                        {isPending ?
+                            <Col span={12}>
+                                <View style={{ flex: 1, justifyContent: "center" }}>
+                                    <ActivityIndicator size="large" />
+                                </View>
+                            </Col>
+                            :
+                            data!.data.map(book => (
                                 <Col key={book.id} span={6}>
                                     <BookCover height={240} onPress={() => goToBook(book.id)} book={book} />
                                 </Col>
-                            ))}
+                            ))
+                        }
                     </Row>
 
                     {/* Pagination actions */}

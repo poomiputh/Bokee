@@ -1,6 +1,7 @@
 import { bookApi } from "@/api/book-api";
 import BookCarousel from "@/components/book-carousel";
 import { Col, Container, Row } from "@/components/layouts/app-layout";
+import Separator from "@/components/layouts/separator";
 import AppText from "@/components/texts/app-text";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Book } from "@/types/Book";
@@ -69,6 +70,7 @@ export default function Index() {
             />
           </Col>
         </Row>
+        <Separator />
 
         {/* Recently added */}
         <Row>
@@ -94,7 +96,8 @@ export default function Index() {
             />
           </Col>
         </Row>
-
+        <Separator />
+        
         {/* Feeling lucky? */}
         <Row>
           <Col span={12}>
@@ -119,6 +122,7 @@ export default function Index() {
             />
           </Col>
         </Row>
+        <Separator />
       </Container>
     </ScrollView>
   );
