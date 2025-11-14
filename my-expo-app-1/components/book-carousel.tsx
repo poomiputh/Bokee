@@ -1,16 +1,13 @@
 import { Book } from "@/types/Book";
-import { parseSource } from "@/utils/imageUtils";
 import React, { useRef } from "react";
 import {
     Animated,
     Dimensions,
     FlatList,
-    Image,
     StyleSheet,
-    TouchableOpacity,
     View
 } from "react-native";
-import AppText from "./texts/app-text";
+import BookCover from "./book-cover";
 
 export type BookCarouselProps = {
     data: Book[]
@@ -94,25 +91,15 @@ export default function BookCarousel(props: BookCarouselProps) {
                                 },
                             ]}
                         >
-                            <TouchableOpacity
-                                activeOpacity={0.85}
+                            <BookCover
+                                book={item}
+                                width={mergedProps.coverWidth}
+                                height={mergedProps.coverHeight}
                                 onPress={() => props.onPress && props.onPress(item)}
-                                accessibilityLabel={`Open ${item.title}`}
-                            >
-                                <Image
-                                    source={parseSource(`${apiUrl}/api/Book/GetPage/${item.id}/1`)}
-                                    style={[
-                                        styles.animatedCover,
-                                        { 
-                                            width: mergedProps.coverWidth,
-                                            height: mergedProps.coverHeight 
-                                        },
-                                    ]}
-                                />
-                            </TouchableOpacity>
-                            <AppText numberOfLines={1} style={styles.animatedTitle}>
+                            />
+                            {/* <AppText numberOfLines={1} style={styles.animatedTitle}>
                                 {item.title}
-                            </AppText>
+                            </AppText> */}
                         </Animated.View>
                     );
                 }}
@@ -125,10 +112,6 @@ export default function BookCarousel(props: BookCarouselProps) {
 const styles = StyleSheet.create({
     animatedItem: {
         alignItems: "center",
-    },
-    animatedCover: {
-        borderRadius: 10,
-        backgroundColor: "#ddd",
     },
     animatedTitle: {
         marginTop: 10,

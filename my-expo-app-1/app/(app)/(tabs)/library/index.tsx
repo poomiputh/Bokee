@@ -7,13 +7,14 @@ import { Book } from "@/types/Book";
 import { Pagination } from "@/types/Pagination";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { ActivityIndicator, PanResponder, ScrollView, StyleSheet, View } from "react-native";
 
 export default function Index() {
     const router = useRouter();
 
     const [currentPage, setCurrentPage] = useState(1);
+    
     const panResponder = useRef(
         PanResponder.create({
             onMoveShouldSetPanResponder: (_, gestureState) =>
@@ -24,10 +25,14 @@ export default function Index() {
             },
         })
     ).current;
+
     const { isPending, error, data, refetch } = useQuery<Pagination<Book>>({
         queryKey: ['booksInfo', currentPage, 12],
         queryFn: () =>
-            bookApi.fetchBooks(currentPage, 12),
+            bookApi.fetchBooks({
+                page: currentPage,
+                pageSize: 12
+            }),
     });
 
     const next = () => {
@@ -41,6 +46,39 @@ export default function Index() {
     const goToBook = (bookId: number) => {
         router.navigate(`/book/${bookId}`);
     };
+
+    const navigator = (
+        <Fragment>
+            <AppButton
+                title="<"
+                fitContent
+                onPress={prev}
+                style={styles.navigationButton}
+            />
+            <AppButton
+                title="1"
+                onPress={() => { setCurrentPage(1); }}
+                style={styles.navigationButton}
+            />
+            <AppText
+                wrapperStyle={styles.navigationButton}
+            >
+                {currentPage}
+            </AppText>
+            <AppButton
+                title={(data?.lastPage ?? 1).toString()}
+                fitContent
+                onPress={() => { setCurrentPage(data?.lastPage ?? 1); }}
+                style={styles.navigationButton}
+            />
+            <AppButton
+                title=">"
+                fitContent
+                onPress={next}
+                style={styles.navigationButton}
+            />
+        </Fragment>
+    );
 
     return (
         <ScrollView
@@ -57,29 +95,7 @@ export default function Index() {
                                 gap: 5
                             }}
                         >
-                            <AppButton
-                                title="1"
-                                onPress={() => { setCurrentPage(1); }}
-                                style={styles.navigationButton}
-                            ></AppButton>
-                            <AppButton
-                                title="<"
-                                fitContent
-                                onPress={prev}
-                                style={styles.navigationButton}
-                            ></AppButton>
-                            <AppButton
-                                title=">"
-                                fitContent
-                                onPress={next}
-                                style={styles.navigationButton}
-                            ></AppButton>
-                            <AppButton
-                                title={(data?.lastPage ?? 1).toString()}
-                                fitContent
-                                onPress={() => { setCurrentPage(data?.lastPage ?? 1); }}
-                                style={styles.navigationButton}
-                            ></AppButton>
+                            {navigator}
                         </View>
                     </Col>
                 </Row>
@@ -100,30 +116,7 @@ export default function Index() {
 
                     {/* Pagination actions */}
                     <Row style={{ gap: 5, justifyContent: "center", marginBottom: 15 }}>
-                        <AppButton
-                            title="1"
-                            fitContent
-                            onPress={() => { setCurrentPage(1); }}
-                            style={styles.navigationButton}
-                        ></AppButton>
-                        <AppButton
-                            title="<"
-                            fitContent
-                            onPress={prev}
-                            style={styles.navigationButton}
-                        ></AppButton>
-                        <AppButton
-                            title=">"
-                            fitContent
-                            onPress={next}
-                            style={styles.navigationButton}
-                        ></AppButton>
-                        <AppButton
-                            title={(data?.lastPage ?? 1).toString()}
-                            fitContent
-                            onPress={() => { setCurrentPage(data?.lastPage ?? 1); }}
-                            style={styles.navigationButton}
-                        ></AppButton>
+                        {navigator}
                     </Row>
                 </View>
             </Container>

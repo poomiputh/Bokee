@@ -4,30 +4,35 @@ import { Col, Container, Row } from "@/components/layouts/app-layout";
 import AppText from "@/components/texts/app-text";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Book } from "@/types/Book";
+import { FilterBooksDto } from "@/types/FilterBooksDto";
 import { Pagination } from "@/types/Pagination";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useQuery } from "@tanstack/react-query";
 import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback } from "react";
+import { useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 
 export default function Index() {
   const router = useRouter();
   const { theme } = useAppTheme();
 
-  const { isPending, error, data, refetch } = useQuery<Pagination<Book>>({
-    queryKey: ['booksInfo', 1, 6],
-    queryFn: () =>
-      bookApi.fetchBooks(1, 6)
+  const [filter, setFilter] = useState<FilterBooksDto>({
+    page: 1,
+    pageSize: 6,
+    random: true
   });
 
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [])
-  );
+  const { data, refetch } = useQuery<Pagination<Book>>({
+    queryKey: ['booksInfo', filter.page, filter.pageSize, filter.random],
+    queryFn: () =>
+      bookApi.fetchBooks(filter)
+  });
+
+  useFocusEffect(() => {
+    refetch();
+  });
 
   const goToBook = (bookId: number) => {
     router.push(`/book/${bookId}`);

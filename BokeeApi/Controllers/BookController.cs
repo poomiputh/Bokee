@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Data.DTOs.Book;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 
@@ -19,9 +20,9 @@ namespace Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetBooks([FromQuery] int? page, [FromQuery] int? pageSize)
+        public async Task<IActionResult> GetBooks([FromQuery] FilterBooksDto filter)
         {
-            var result = await _bookService.GetBooks(page, pageSize);
+            var result = await _bookService.GetBooks(filter);
             return Ok(result);
         }
 

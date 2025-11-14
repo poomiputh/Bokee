@@ -30,10 +30,9 @@ namespace Services
             _wwwRootPath = env.WebRootPath;
         }
 
-        public async Task<PaginationDto<BookDto>> GetBooks(int? page, int? pageSize)
+        public async Task<PaginationDto<BookDto>> GetBooks(FilterBooksDto filter)
         {
             var query = _dbContext.Books
-                .OrderBy(b => b.Id)
                 .Select(b => new BookDto
                 {
                     Id = b.Id,
@@ -43,8 +42,20 @@ namespace Services
                     TotalPages = b.TotalPages
                 });
 
+            if (filter.Random ?? false)
+            {
+                query = query.OrderBy(b => Guid.NewGuid());
+            }
+            else
+            {
+                query = query.OrderBy(b => b.Id);
+            }
+
+            int? page = filter.Page;
+            int? pageSize = filter.PageSize;
             if (page != null && pageSize != null)
             {
+
                 query = query
                     .Skip(((int)page - 1) * (int)pageSize)
                     .Take((int)pageSize);

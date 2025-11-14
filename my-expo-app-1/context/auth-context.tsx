@@ -1,7 +1,7 @@
 import { authApi } from "@/api/auth-api";
 import { axiosClient } from "@/api/axios-client/axios-client";
 import { useStorageState } from "@/hooks/useStorageState";
-import { createContext, PropsWithChildren } from "react";
+import { createContext, PropsWithChildren, useEffect } from "react";
 
 type AuthContextType = {
   login: () => void;
@@ -19,6 +19,12 @@ export const AuthContext = createContext<AuthContextType>({
 
 export function SessionProvider({ children }: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session');
+
+  useEffect(() => {
+    if (!isLoading) {
+      axiosClient.defaults.headers.common['Authorization'] = `Bearer ${session}`;
+    }
+  }, [isLoading, session]);
 
   const login = async () => {
     const result = await authApi.loginUser({

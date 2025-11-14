@@ -1,18 +1,14 @@
 import { Book } from "@/types/Book";
+import { FilterBooksDto } from "@/types/FilterBooksDto";
 import { Pagination } from "@/types/Pagination";
+import { toSearchParams } from "@/utils/urlUtils";
 import { axiosClient } from "./axios-client/axios-client";
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 export const bookApi = {
 
-  fetchBooks: async (page?: number, pageSize?: number): Promise<Pagination<Book>> => {
-    const params = new URLSearchParams();
-    if (page) params.append('page', String(page));
-    if (pageSize) params.append('pageSize', String(pageSize));
-
-    if (!page || !pageSize) pageSize = 6;
-
-    const url = `${apiUrl}/api/Book/GetBooks?${params.toString()}`;
+  fetchBooks: async (filter: FilterBooksDto): Promise<Pagination<Book>> => {
+    const url = `${apiUrl}/api/Book/GetBooks?${toSearchParams(filter)}`;
     const result = await axiosClient.get<Pagination<Book>>(url);
     return result.data;
   },

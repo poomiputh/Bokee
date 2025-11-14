@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { useColorScheme } from "react-native";
-import { darkTheme, lightTheme } from "../theme/colors";
+import { lightTheme } from "../theme/colors";
 
 export const ThemeContext = createContext({
     theme: lightTheme,
@@ -15,7 +15,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     const [rootHeaderShown, setRootHeaderShown] = useState(true);
 
     const toggleTheme = () => setIsDark((prev) => !prev);
-    const theme = isDark ? darkTheme : lightTheme;
+    const theme = lightTheme //isDark ? darkTheme : lightTheme;
 
     const toggleRootHeader = () => setRootHeaderShown((prev) => !prev);
 

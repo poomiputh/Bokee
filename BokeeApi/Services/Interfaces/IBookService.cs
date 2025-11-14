@@ -5,7 +5,7 @@ namespace Services.Interfaces
 {
     public interface IBookService
     {
-        public Task<PaginationDto<BookDto>> GetBooks(int? page, int? pageSize);
+        public Task<PaginationDto<BookDto>> GetBooks(FilterBooksDto filter);
         public Task<BookDto?> GetBook(int bookId);
         public Task<(byte[] Data, string ContentType)?> GetPage(int bookId, int page);
         public Task<string?> GetPagePath(int bookId, int page);
