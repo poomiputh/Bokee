@@ -55,7 +55,11 @@ export default function Index() {
                             <AppText style={{ marginBottom: 15 }}>
                                 Total pages: {data?.totalPages ?? ""}
                             </AppText>
-                            <AppButton title="Read" onPress={() => goToPage(1)} />
+                            <AppButton
+                                title="Read"
+                                style={{}}
+                                onPress={() => goToPage(1)}
+                            />
                         </Col>
                     </Row>
                 </Container>

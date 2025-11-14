@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 
@@ -8,10 +10,12 @@ namespace Controllers
     public class BookController : ControllerBase
     {
         private readonly IBookService _bookService;
+        private readonly IUserService _userService;
 
-        public BookController(IBookService bookService)
+        public BookController(IBookService bookService, IUserService userService)
         {
             _bookService = bookService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -30,8 +34,16 @@ namespace Controllers
         }
 
         [HttpGet("{bookId}/{page}")]
-        public async Task<IActionResult> GetPage(int bookId, int page)
+        public async Task<IActionResult> GetPage(int bookId, int page, [FromQuery] bool focus)
         {
+            // Client cache prevent progress update
+            // if (focus)
+            // {
+            //     int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            //     if (userId == 0) return Unauthorized();
+            //     await _userService.SetBookProgress(userId, bookId, page);
+            // }
+
             var book = await _bookService.GetBook(bookId);
             if (book == null) return NotFound();
 

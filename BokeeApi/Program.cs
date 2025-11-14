@@ -48,6 +48,8 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<ILogger, Logger<IBookService>>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 builder.Services.AddCors(options =>
 {

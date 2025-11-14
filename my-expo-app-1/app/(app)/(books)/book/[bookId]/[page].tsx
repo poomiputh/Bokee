@@ -52,7 +52,7 @@ export default function Page() {
                     flex: 1,
                     backgroundColor: "black",
                 }}
-                source={parseSource(`${apiUrl}/api/Book/GetPage/${bookId}/${page}`)}
+                source={parseSource(`${apiUrl}/api/Book/GetPage/${bookId}/${page}?focus=true`)}
                 resizeMode="contain"
                 fadeDuration={0}
             />
