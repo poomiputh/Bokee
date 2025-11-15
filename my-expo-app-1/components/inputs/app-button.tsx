@@ -1,8 +1,11 @@
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { ButtonProps, Pressable, StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { ButtonProps, Pressable, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import AppText from "../texts/app-text";
 
 export type AppButtonProps = ButtonProps & {
+  leftIcon?: React.ReactNode;
+  leftIconMargin?: number;
+  disabled?: boolean;
   fitContent?: boolean;
   style?: StyleProp<ViewStyle>;
 };
@@ -12,9 +15,13 @@ export default function AppButton(props: AppButtonProps) {
 
   const styles = StyleSheet.create({
     button: {
+      justifyContent: "center",
+      flexDirection: "row",
+      paddingVertical: 10,
+      paddingHorizontal: 10,
+      alignSelf: props.fitContent ? "flex-start" : "auto",
+
       backgroundColor: theme.colors.primary,
-      paddingVertical: 8,
-      paddingHorizontal: 16,
       borderRadius: 8,
       elevation: 2,
       shadowColor: '#000',
@@ -27,7 +34,7 @@ export default function AppButton(props: AppButtonProps) {
       opacity: 0.7,
     },
     buttonText: {
-      color: 'white',
+      color: theme.colors.primaryContrastTex,
       fontSize: 16,
       fontWeight: '600',
       textAlign: 'center',
@@ -36,16 +43,26 @@ export default function AppButton(props: AppButtonProps) {
 
   return (
     <Pressable
+      disabled={props.disabled}
       onPress={props.onPress}
       style={({ pressed }) => [
         styles.button,
-        {
-          alignSelf: props.fitContent ? "flex-start" : "auto"
-        },
-        pressed && styles.buttonPressed, // style when pressed
+        pressed && styles.buttonPressed,
         props.style
       ]}
     >
+      {!!props.leftIcon &&
+        <View
+          style={{
+            justifyContent: "center",
+            padding: 0,
+            marginRight:
+              props.leftIconMargin
+          }}
+        >
+          {props.leftIcon}
+        </View>
+      }
       <AppText
         wrapperStyle={{ justifyContent: "center" }}
         style={styles.buttonText}

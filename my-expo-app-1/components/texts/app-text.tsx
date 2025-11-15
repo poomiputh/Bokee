@@ -25,7 +25,14 @@ export default function AppText(props: AppTextProps) {
             ]}
         >
             {!!props.leftIcon &&
-                <View style={{ justifyContent: "center", padding: 0, marginRight: props.leftIconMargin }}>
+                <View
+                    style={{
+                        justifyContent: "center",
+                        padding: 0,
+                        marginRight:
+                            props.leftIconMargin
+                    }}
+                >
                     {props.leftIcon}
                 </View>
             }

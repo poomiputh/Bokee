@@ -5,7 +5,8 @@ export const lightTheme = {
     ...DefaultTheme,
     colors: {
         ...DefaultTheme.colors,
-        primary: "#2b8562ff",
+        primary: "#7fb069",
+        primaryContrastTex: "#ffffffff",
         background: "#f0f0f0ff",
         backgroundBackdrop: "#c0c0c0ff",
         card: "#ffffffff",
@@ -18,7 +19,8 @@ export const darkTheme = {
     ...DarkTheme,
     colors: {
         ...DarkTheme.colors,
-        primary: "#2b8562ff",
+        primary: "#7fb069",
+        primaryContrastTex: "#ffffffff",
         background: "#161616ff",
         backgroundBackdrop: "#3f3f3fff",
         card: "#161616ff",

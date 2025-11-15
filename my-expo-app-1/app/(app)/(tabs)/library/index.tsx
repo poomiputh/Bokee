@@ -60,10 +60,16 @@ export default function Index() {
                 onPress={() => { setCurrentPage(1); }}
                 style={styles.navigationButton}
             />
-            <AppText
-                wrapperStyle={styles.navigationButton}
-            >
-                {currentPage}
+            <AppText style={{ fontSize: 25 }}>
+                ...
+            </AppText>
+            <AppButton
+                title={currentPage.toString()}
+                style={styles.navigationButton}
+                disabled
+            />
+            <AppText style={{ fontSize: 25 }}>
+                ...
             </AppText>
             <AppButton
                 title={(data?.lastPage ?? 1).toString()}
@@ -103,7 +109,7 @@ export default function Index() {
                 {/* Content */}
                 <View {...panResponder.panHandlers} style={{ flex: 1, justifyContent: "space-between" }}>
                     {/* Book covers */}
-                    <Row style={{ flex: 1 }}>
+                    <Row style={{ flex: 1, marginBottom: 15 }}>
                         {isPending ?
                             <Col span={12}>
                                 <View style={{ flex: 1, justifyContent: "center" }}>
@@ -138,7 +144,9 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     navigationButton: {
+        width: 40,
         paddingVertical: 10,
-        paddingHorizontal: 17,
+        paddingHorizontal: 10,
+        borderRadius: "50%"
     }
 });
