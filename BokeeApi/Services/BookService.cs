@@ -218,11 +218,13 @@ namespace Services
                         order++;
                     }
 
+                    var relativePath = Path.GetRelativePath(folderPath, zipPath);
                     DateTime currentUtcNow = DateTime.UtcNow;
                     var book = new Book
                     {
                         Title = zipFileName,
                         StorageGuid = storageGuid,
+                        SourcePath = relativePath,
                         TotalPages = order - 1,
                         CreatedDate = currentUtcNow,
                         ModifiedDate = currentUtcNow

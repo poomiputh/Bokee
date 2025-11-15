@@ -1,6 +1,9 @@
 
+using Microsoft.EntityFrameworkCore;
+
 namespace Data.Models
 {
+    [Index(nameof(UserId), nameof(BookId), nameof(CategoryId), IsUnique = true)]
     public class SavedBook
     {
         public int Id { get; set; }

@@ -1,5 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Data.Models
 {
+    [Index(nameof(UserId), nameof(BookId), IsUnique = true)]
     public class BookProgress
     {
         public int Id { get; set; }
