@@ -11,29 +11,40 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useQuery } from "@tanstack/react-query";
-import { useFocusEffect, useRouter } from "expo-router";
-import { useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
+import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 
 export default function Index() {
   const router = useRouter();
   const { theme } = useAppTheme();
 
-  const [filter, setFilter] = useState<FilterBooksDto>({
+  const recentFilter: FilterBooksDto = {
+    page: 1,
+    pageSize: 6,
+  }
+
+  const randomFilter: FilterBooksDto = {
     page: 1,
     pageSize: 6,
     random: true
-  });
+  }
 
-  const { data, refetch } = useQuery<Pagination<Book>>({
-    queryKey: ['booksInfo', filter.page, filter.pageSize, filter.random],
+  const recentBooks = useQuery<Pagination<Book>>({
+    queryKey: ['GetBooks', recentFilter.page, recentFilter.pageSize],
     queryFn: () =>
-      bookApi.fetchBooks(filter)
+      bookApi.fetchBooks(recentFilter)
   });
 
-  useFocusEffect(() => {
-    refetch();
+  const randomBooks = useQuery<Pagination<Book>>({
+    queryKey: ['GetBooks', randomFilter.page, randomFilter.pageSize, randomFilter.random],
+    queryFn: () =>
+      bookApi.fetchBooks(randomFilter)
   });
+
+  const refetchAll = () => {
+    recentBooks.refetch();
+    randomBooks.refetch();
+  };
 
   const goToBook = (bookId: number) => {
     router.push(`/book/${bookId}`);
@@ -44,6 +55,9 @@ export default function Index() {
       style={{
         flex: 1,
       }}
+      refreshControl={
+        <RefreshControl refreshing={false} onRefresh={refetchAll} />
+      }
     >
       <Container style={{ paddingVertical: 20 }}>
         {/* Continue reading */}
@@ -61,7 +75,7 @@ export default function Index() {
         <Row>
           <Col span={12}>
             <BookCarousel
-              data={data?.data ?? []}
+              data={recentBooks.data?.data ?? []}
               coverWidth={108}
               coverHeight={162}
               itemWidthModifier={0.35}
@@ -87,7 +101,7 @@ export default function Index() {
         <Row>
           <Col span={12}>
             <BookCarousel
-              data={data?.data ?? []}
+              data={recentBooks.data?.data ?? []}
               coverWidth={108}
               coverHeight={162}
               itemWidthModifier={0.35}
@@ -97,7 +111,7 @@ export default function Index() {
           </Col>
         </Row>
         <Separator />
-        
+
         {/* Feeling lucky? */}
         <Row>
           <Col span={12}>
@@ -113,7 +127,7 @@ export default function Index() {
         <Row>
           <Col span={12}>
             <BookCarousel
-              data={data?.data ?? []}
+              data={randomBooks.data?.data ?? []}
               coverWidth={108}
               coverHeight={162}
               itemWidthModifier={0.35}

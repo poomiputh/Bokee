@@ -26,8 +26,8 @@ export default function Index() {
         })
     ).current;
 
-    const { isPending, error, data, refetch } = useQuery<Pagination<Book>>({
-        queryKey: ['booksInfo', currentPage, 12],
+    const { isPending, data } = useQuery<Pagination<Book>>({
+        queryKey: ['GetBooks', currentPage, 12],
         queryFn: () =>
             bookApi.fetchBooks({
                 page: currentPage,
