@@ -72,10 +72,33 @@ var app = builder.Build();
 // {
 //     using var scope = app.Services.CreateScope();
 //     var dbContext = scope.ServiceProvider.GetRequiredService<BokeeDbContext>();
+//     var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 //     var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
 //     var bookService = scope.ServiceProvider.GetRequiredService<IBookService>();
+
+//     dbContext.BookProgresses.RemoveRange(dbContext.BookProgresses);
+//     dbContext.SavedBooks.RemoveRange(dbContext.SavedBooks);
+//     dbContext.Books.RemoveRange(dbContext.Books);
+//     dbContext.Users.RemoveRange(dbContext.Users);
+
+//     await dbContext.SaveChangesAsync();
+
+//     var storageBasePath = config["Storage:Base"];
+//     var storageBookPath = config["Storage:Book"];
+//     if (storageBasePath == null || storageBookPath == null)
+//     {
+//         throw new DirectoryNotFoundException("Invalid book storage path.");
+//     }
+
+//     var bookPath = Path.Combine(env.WebRootPath, storageBasePath, storageBookPath);
 //     var seedBookPath = Path.Combine(env.WebRootPath, "SeedStorage", "Book");
-//     await bookService.AddBooks(seedBookPath);
+
+//     if (Directory.Exists(bookPath))
+//     {
+//         Directory.Delete(bookPath, recursive: true);
+//     }
+
+//     await bookService.AddBooks(@"E:\Media\Horny\Horny_Read\Random");
 // }
 // catch (Exception ex)
 // {
@@ -96,6 +119,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers().RequireAuthorization();;
+app.MapControllers().RequireAuthorization(); ;
 
 app.Run();

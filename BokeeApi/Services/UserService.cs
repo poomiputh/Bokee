@@ -22,6 +22,37 @@ namespace Services
             _config = config;
         }
 
+        public async Task<bool> CreateSavedBook(int userId, int bookId, int categoryId)
+        {
+            bool isExist = await _dbContext.SavedBooks
+                .AnyAsync(sb => sb.UserId == userId && sb.BookId == bookId && sb.CategoryId == categoryId);
+            if (isExist) return true;
+
+            SavedBook savedBook = new SavedBook
+            {
+                UserId = userId,
+                BookId = bookId,
+                CategoryId = categoryId,
+                CreatedDate = DateTime.UtcNow
+            };
+
+            await _dbContext.SavedBooks.AddAsync(savedBook);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteSavedBook(int userId, int bookId, int categoryId)
+        {
+            SavedBook? savedBook = await _dbContext.SavedBooks
+                .Where(sb => sb.UserId == userId && sb.BookId == bookId && sb.CategoryId == categoryId)
+                .FirstOrDefaultAsync();
+            if (savedBook == null) return false;
+
+            _dbContext.SavedBooks.Remove(savedBook);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<bool> SetBookProgress(int userId, int bookId, int page)
         {
             bool userExists = await _dbContext.Users.AnyAsync(u => u.Id == userId);
