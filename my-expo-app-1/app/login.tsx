@@ -49,75 +49,90 @@ export default function Login() {
 
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            {isLoading && <ActivityIndicator size="large" />}
-            <BottomModal visible={visible} onClose={() => setVisible(false)}>
-                <AppText
-                    leftIcon={<Image style={{ width: 45, height: 45 }} source={require("../assets/icons/logo.png")} />}
-                    leftIconMargin={15}
-                    wrapperStyles={{ marginBottom: 40 }}
-                    style={{ fontSize: 35, fontWeight: "bold" }}
-                >
-                    Log In
-                </AppText>
-                <Controller
-                    control={control}
-                    rules={{
-                        required: true
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <AppTextInput
-                            textContentType="username"
-                            autoCapitalize="none"
-                            placeholder="Username or Email"
-                            onBlur={onBlur}
-                            onChangeText={onChange}
-                            returnKeyType="next"
-                            onSubmitEditing={() => passwordRef.current?.focus()}
-                            value={value}
-                            style={{ marginBottom: 20 }}
-                        />
-                    )}
-                    name="userIdentifier"
-                />
+            {isLoading ?
+                <ActivityIndicator size="large" />
+                :
+                <BottomModal visible={visible} onClose={() => setVisible(false)}>
+                    <AppText
+                        leftIcon={<Image style={{ width: 45, height: 45 }} source={require("../assets/icons/logo.png")} />}
+                        leftIconMargin={15}
+                        wrapperStyles={{ marginBottom: 40 }}
+                        style={{ fontSize: 35, fontWeight: "bold" }}
+                    >
+                        Log In
+                    </AppText>
+                    <Controller
+                        control={control}
+                        rules={{
+                            required: true
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <AppTextInput
+                                textContentType="username"
+                                autoCapitalize="none"
+                                placeholder="Your username or email"
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                returnKeyType="next"
+                                onSubmitEditing={() => passwordRef.current?.focus()}
+                                submitBehavior="submit"
+                                value={value}
+                                style={{ marginBottom: 20 }}
+                            />
+                        )}
+                        name="userIdentifier"
+                    />
 
-                <Controller
-                    control={control}
-                    rules={{
-                        required: true
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <AppTextInput
-                            ref={passwordRef}
-                            autoCapitalize="none"
-                            textContentType="password"
-                            secureTextEntry
-                            placeholder="Password"
-                            onBlur={onBlur}
-                            onChangeText={onChange}
-                            value={value}
-                            style={{ marginBottom: 20 }}
-                        />
-                    )}
-                    name="password"
-                />
+                    <Controller
+                        control={control}
+                        rules={{
+                            required: true
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <AppTextInput
+                                ref={passwordRef}
+                                autoCapitalize="none"
+                                textContentType="password"
+                                secureTextEntry
+                                placeholder="Your password"
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                style={{ marginBottom: 20 }}
+                            />
+                        )}
+                        name="password"
+                    />
 
-                <AppCheckbox
-                    label="Keep me logged in"
-                    labelMargin={10}
-                    wrapperStyles={{ marginBottom: 20 }}
-                    onValueChange={(value) => {
-                        if (value) {
-                            const autologinKey = Constant.UserPreferences.UseAutoLogin;
-                            storage.set(autologinKey, value);
-                        }
-                    }}
-                />
+                    <AppCheckbox
+                        label="Keep me logged in"
+                        labelMargin={10}
+                        wrapperStyles={{ marginBottom: 20 }}
+                        onValueChange={(value) => {
+                            if (value) {
+                                const autologinKey = Constant.UserPreferences.UseAutoLogin;
+                                storage.set(autologinKey, value);
+                            }
+                        }}
+                    />
 
-                <AppButton
-                    title="Log In"
-                    onPress={handleSubmit(onSubmit)}
-                />
-            </BottomModal>
+                    <AppButton
+                        title="Log In"
+                        onPress={handleSubmit(onSubmit)}
+                        style={{
+                            marginBottom: 20
+                        }}
+                    />
+
+                    <AppText
+                        onPress={() => {
+                            router.push("register");
+                        }}
+                    >
+                        Register
+                    </AppText>
+                </BottomModal>
+            }
         </View>
     );
 }

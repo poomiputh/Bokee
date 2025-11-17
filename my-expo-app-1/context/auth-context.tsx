@@ -63,6 +63,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
     storage.remove(autologinKey);
     delete axiosClient.defaults.headers.common['Authorization'];
     setSession(null);
+    setTempSession(null);
   };
 
   return (

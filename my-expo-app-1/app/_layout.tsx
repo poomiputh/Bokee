@@ -10,7 +10,7 @@ import { SplashScreen, Stack } from "expo-router";
 SplashScreen.preventAutoHideAsync();
 
 function SplashScreenController() {
-  const {isLoading} = useSession();
+  const { isLoading } = useSession();
 
   if (!isLoading) {
     SplashScreen.hide();
@@ -25,19 +25,19 @@ function RootNavigator() {
 
   return (
     <NavThemeProvider value={theme}>
-    <Stack
-      screenOptions={{
-        headerShown: false
-      }}
-    >
-      <Stack.Protected guard={!!session}>
-        <Stack.Screen name="(app)" />
-      </Stack.Protected>
+      <Stack
+        screenOptions={{
+          headerShown: false
+        }}
+      >
+        <Stack.Protected guard={!!session}>
+          <Stack.Screen name="(app)" />
+        </Stack.Protected>
 
-      <Stack.Protected guard={!session}>
-        <Stack.Screen name="login" />
-      </Stack.Protected>
-    </Stack>
+        <Stack.Protected guard={!session}>
+          <Stack.Screen name="login" />
+        </Stack.Protected>
+      </Stack>
     </NavThemeProvider>
   );
 }
