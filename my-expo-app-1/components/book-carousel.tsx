@@ -1,4 +1,4 @@
-import { Book } from "@/types/Book";
+import { BookDto } from "@/types/BookDto";
 import React, { useRef } from "react";
 import {
     Animated,
@@ -10,12 +10,12 @@ import {
 import BookCover from "./book-cover";
 
 export type BookCarouselProps = {
-    data: Book[]
+    data: BookDto[]
     coverWidth?: number;
     coverHeight?: number;
     itemWidthModifier?: number;
     disableCenterFocus?: boolean;
-    onPress?: (book: Book) => void;
+    onPress?: (book: BookDto) => void;
 };
 
 const defaultProps = {
@@ -42,7 +42,7 @@ export default function BookCarousel(props: BookCarouselProps) {
 
     return (
         <View>
-            <Animated.FlatList<Book>
+            <Animated.FlatList<BookDto>
                 ref={ref}
                 data={listData}
                 keyExtractor={(item) => item.title + item.id}

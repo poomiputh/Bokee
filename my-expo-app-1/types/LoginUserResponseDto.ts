@@ -1,6 +1,6 @@
-import { User } from "./User";
+import { UserDto } from "./UserDto";
 
 export type LoginUserResponseDto = {
-    user: User;
+    user: UserDto;
     token: string;
 };

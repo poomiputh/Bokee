@@ -39,7 +39,10 @@ namespace Services
                     Title = b.Title,
                     StorageGuid = b.StorageGuid,
                     Description = b.Description,
-                    TotalPages = b.TotalPages
+                    TotalPages = b.TotalPages,
+                    Unread = !b.UserBookProgresses.Any(),
+                    CreatedDate = b.CreatedDate,
+                    ModifiedDate = b.ModifiedDate
                 });
 
             if (filter.Random ?? false)
@@ -80,18 +83,23 @@ namespace Services
 
         public async Task<BookDto?> GetBook(int bookId)
         {
-            var result = await _dbContext.Books.FindAsync(bookId);
-            if (result == null) return null;
-            return new BookDto
+            var result = await _dbContext.Books
+            .Where(b => b.Id == bookId)
+            .Select(b => new BookDto
             {
-                Id = result.Id,
-                Title = result.Title,
-                StorageGuid = result.StorageGuid,
-                Description = result.Description,
-                TotalPages = result.TotalPages,
-                CreatedDate = result.CreatedDate,
-                ModifiedDate = result.ModifiedDate
-            };
+                Id = b.Id,
+                Title = b.Title,
+                StorageGuid = b.StorageGuid,
+                Description = b.Description,
+                TotalPages = b.TotalPages,
+                Unread = !b.UserBookProgresses.Any(),
+                CreatedDate = b.CreatedDate,
+                ModifiedDate = b.ModifiedDate
+            })
+            .FirstOrDefaultAsync();
+
+            if (result == null) return null;
+            return result;
         }
 
         public async Task<(byte[] Data, string ContentType)?> GetPage(int bookId, int page)

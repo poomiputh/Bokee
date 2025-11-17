@@ -4,7 +4,7 @@ import { Col, Container, Row } from "@/components/layouts/app-layout";
 import Separator from "@/components/layouts/separator";
 import AppText from "@/components/texts/app-text";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { Book } from "@/types/Book";
+import { BookDto } from "@/types/BookDto";
 import { parseSource } from "@/utils/imageUtils";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
@@ -20,7 +20,7 @@ export default function Index() {
     const router = useRouter();
     const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-    const { isPending, data } = useQuery<Book>({
+    const { isPending, data } = useQuery<BookDto>({
         queryKey: ['book', bookId],
         queryFn: () =>
             bookApi.fetchBook(parseInt(bookId))

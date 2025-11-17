@@ -1,5 +1,7 @@
+import { userApi } from "@/api/user-api";
 import { parseSource } from "@/utils/imageUtils";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useMutation } from "@tanstack/react-query";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useRef } from "react";
 import { Dimensions, GestureResponderEvent, Image, PanResponder, View } from "react-native";
 
@@ -10,6 +12,10 @@ export default function Page() {
 
     const router = useRouter();
     const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+
+    const mutation = useMutation({
+        mutationFn: userApi.setBookProgress
+    });
 
     const back = () => {
         const toPage = Math.max(1, parseInt(page) - 1);
@@ -44,6 +50,13 @@ export default function Page() {
             },
         })
     ).current;
+
+    useFocusEffect(() => {
+        mutation.mutate({
+            bookId: parseInt(bookId),
+            page: parseInt(page)
+        })
+    });
 
     return (
         <View {...panResponder.panHandlers} style={{ flex: 1 }}>

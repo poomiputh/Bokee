@@ -4,9 +4,9 @@ import { Col, Container, Row } from "@/components/layouts/app-layout";
 import Separator from "@/components/layouts/separator";
 import AppText from "@/components/texts/app-text";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { Book } from "@/types/Book";
+import { BookDto } from "@/types/BookDto";
 import { FilterBooksDto } from "@/types/FilterBooksDto";
-import { Pagination } from "@/types/Pagination";
+import { PaginationDto } from "@/types/PaginationDto";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -28,13 +28,13 @@ export default function Index() {
     random: true
   }
 
-  const recentBooks = useQuery<Pagination<Book>>({
+  const recentBooks = useQuery<PaginationDto<BookDto>>({
     queryKey: ['GetBooks', recentFilter.page, recentFilter.pageSize],
     queryFn: () =>
       bookApi.fetchBooks(recentFilter)
   });
 
-  const randomBooks = useQuery<Pagination<Book>>({
+  const randomBooks = useQuery<PaginationDto<BookDto>>({
     queryKey: ['GetBooks', "Random", randomFilter.random],
     queryFn: () =>
       bookApi.fetchBooks(randomFilter),
@@ -42,7 +42,7 @@ export default function Index() {
   });
 
   // Sub-components
-  const feed = (feedTitle: string, books: Book[]) => {
+  const feed = (feedTitle: string, books: BookDto[]) => {
     return (
       <Fragment>
         <Row style={{ justifyContent: "space-between" }}>

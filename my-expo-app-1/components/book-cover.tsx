@@ -1,4 +1,4 @@
-import { Book } from "@/types/Book";
+import { BookDto } from "@/types/BookDto";
 import { parseSource } from "@/utils/imageUtils";
 import { DimensionValue, Image, Text, TouchableOpacity, View } from "react-native";
 
@@ -6,7 +6,7 @@ type BookCoverProps = {
     width?: DimensionValue;
     height?: DimensionValue;
     onPress?: () => void;
-    book: Book;
+    book: BookDto;
 }
 
 export default function BookCover(props: BookCoverProps) {
@@ -26,6 +26,7 @@ export default function BookCover(props: BookCoverProps) {
                     shadowOpacity: 0.3,
                     shadowRadius: 5,
                     elevation: 6, // Android shadow
+                    overflow: "hidden"
                 }}
             >
                 <Image
@@ -37,6 +38,21 @@ export default function BookCover(props: BookCoverProps) {
                     }}
                     source={parseSource(`${apiUrl}/api/Book/GetPage/${props.book.id}/1`)}
                 />
+
+                {props.book.unread &&
+                    <View
+                        style={{
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            height: "20%",
+                            // transform: "rotate(-45deg)",
+                            backgroundColor: "rgba(255, 166, 0, 1)", // semi-transparent red
+                            paddingVertical: 6,
+                            paddingHorizontal: 8,
+                        }}
+                    ></View>
+                }
 
                 <View
                     style={{

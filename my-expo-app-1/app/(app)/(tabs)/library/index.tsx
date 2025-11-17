@@ -3,8 +3,8 @@ import BookCover from "@/components/book-cover";
 import AppButton from "@/components/inputs/app-button";
 import { Col, Container, Row } from "@/components/layouts/app-layout";
 import AppText from "@/components/texts/app-text";
-import { Book } from "@/types/Book";
-import { Pagination } from "@/types/Pagination";
+import { BookDto } from "@/types/BookDto";
+import { PaginationDto } from "@/types/PaginationDto";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { Fragment, useDeferredValue, useRef, useState } from "react";
@@ -26,7 +26,7 @@ export default function Index() {
         })
     ).current;
 
-    const { isPending, data } = useQuery<Pagination<Book>>({
+    const { isPending, data } = useQuery<PaginationDto<BookDto>>({
         queryKey: ['GetBooks', deferredCurrentPage, 12],
         queryFn: () =>
             bookApi.fetchBooks({
