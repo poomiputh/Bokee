@@ -8,16 +8,21 @@ export type AppCheckboxProps = {
     label: string;
     labelMargin?: DimensionValue;
     wrapperStyles?: StyleProp<ViewStyle>;
+    onValueChange?: (value: boolean) => void;
 };
 
 export function AppCheckbox(props: AppCheckboxProps) {
     const { theme } = useAppTheme();
     const [isChecked, setChecked] = useState(false);
+
     return (
         <View style={[{ flexDirection: "row" }, props.wrapperStyles]}>
             <Checkbox
                 value={isChecked}
-                onValueChange={setChecked}
+                onValueChange={(value) => {
+                    setChecked(value);
+                    if (props.onValueChange) props.onValueChange(value);
+                }}
                 color={theme.colors.primary}
             />
             <AppText wrapperStyles={{

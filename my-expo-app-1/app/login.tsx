@@ -1,9 +1,11 @@
+import { Constant } from "@/app-constants";
 import BottomModal from "@/components/bottom-modal";
 import AppButton from "@/components/inputs/app-button";
 import { AppCheckbox } from "@/components/inputs/app-checkbox";
 import { AppTextInput } from "@/components/inputs/app-text-input";
 import AppText from "@/components/texts/app-text";
 import { useSession } from "@/hooks/useSession";
+import { storage } from "@/storage/mmkv";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -103,6 +105,12 @@ export default function Login() {
                     label="Keep me logged in"
                     labelMargin={10}
                     wrapperStyles={{ marginBottom: 20 }}
+                    onValueChange={(value) => {
+                        if (value) {
+                            const autologinKey = Constant.UserPreferences.UseAutoLogin;
+                            storage.set(autologinKey, value);
+                        }
+                    }}
                 />
 
                 <AppButton

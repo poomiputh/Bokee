@@ -1,6 +1,8 @@
 import { authApi } from "@/api/auth-api";
 import { axiosClient } from "@/api/axios-client/axios-client";
+import { Constant } from "@/app-constants";
 import { useStorageState } from "@/hooks/useStorageState";
+import { storage } from "@/storage/mmkv";
 import { LoginUserDto } from "@/types/LoginUserDto";
 import { LoginUserResponseDto } from "@/types/LoginUserResponseDto";
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
@@ -21,11 +23,11 @@ export const AuthContext = createContext<AuthContextType>({
 
 export function SessionProvider({ children }: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session');
+  const [tempSession, setTempSession] = useState<string | null>(null)
   const [isLoadingApi, setIsLoadingApi] = useState(false);
 
   useEffect(() => {
     if (!isLoading && session) {
-
       const exp = JSON.parse(atob(session.split('.')[1])).exp * 1000;
       if (Date.now() > exp) logout();
 
@@ -40,8 +42,14 @@ export function SessionProvider({ children }: PropsWithChildren) {
         userIdentifier: loginData.userIdentifier,
         password: loginData.password
       })
+
+      const autologinKey = Constant.UserPreferences.UseAutoLogin;
+      if (storage.contains(autologinKey) || !!storage.getBoolean(autologinKey)) {
+        setSession(result.token);
+      } else {
+        setTempSession(result.token);
+      }
       axiosClient.defaults.headers.common['Authorization'] = `Bearer ${result.token}`;
-      setSession(result.token);
       return result;
     } catch {
       return undefined;
@@ -51,6 +59,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
   };
 
   const logout = () => {
+    const autologinKey = Constant.UserPreferences.UseAutoLogin;
+    storage.remove(autologinKey);
     delete axiosClient.defaults.headers.common['Authorization'];
     setSession(null);
   };
@@ -60,7 +70,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       value={{
         login: login,
         logout: logout,
-        session,
+        session: session ?? tempSession,
         isLoading: isLoading || isLoadingApi,
       }}>
       {children}
