@@ -13,10 +13,10 @@ export default function BottomModal({ visible, onClose, children }: { visible: b
         },
         backdrop: {
             ...StyleSheet.absoluteFillObject,
-            backgroundColor: theme.colors.background,
+            backgroundColor: theme.colors.backgroundBackdrop,
         },
         container: {
-            backgroundColor: theme.colors.backgroundBackdrop,
+            backgroundColor: theme.colors.background,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             height: "75%",     // ⬅️ Occupy 75% of screen height

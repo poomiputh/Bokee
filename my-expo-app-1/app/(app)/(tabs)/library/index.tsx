@@ -31,9 +31,9 @@ export default function Index() {
         queryFn: () =>
             bookApi.fetchBooks({
                 page: deferredCurrentPage,
-                pageSize: 12
+                pageSize: 12,
             }),
-        placeholderData: keepPreviousData
+        placeholderData: keepPreviousData,
     });
 
     // Functions

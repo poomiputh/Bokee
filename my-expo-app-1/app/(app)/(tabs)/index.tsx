@@ -56,7 +56,9 @@ export default function Index() {
             </AppText>
           </Col>
           <Col span={'auto'} style={{ justifyContent: "center" }}>
-            <AppText>
+            <AppText
+              onPress={() => router.navigate("/(app)/(tabs)/library")}
+            >
               See more
             </AppText>
           </Col>

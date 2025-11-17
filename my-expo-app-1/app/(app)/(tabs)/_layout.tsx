@@ -11,7 +11,7 @@ export default function TabLayout() {
   const pathNameMap: Map<string, string> = new Map([
     ["/", "Bokee"],
     ["/library", "Public Library"],
-    ["/account", "Your Account"]
+    ["/account", "Your Account"],
   ]);
 
   useEffect(() => {
