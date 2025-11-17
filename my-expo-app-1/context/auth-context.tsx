@@ -21,7 +21,11 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session');
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && session) {
+
+      const exp = JSON.parse(atob(session.split('.')[1])).exp * 1000;
+      if (Date.now() > exp) logout();
+
       axiosClient.defaults.headers.common['Authorization'] = `Bearer ${session}`;
     }
   }, [isLoading, session]);

@@ -5,15 +5,15 @@ import { Col, Container, Row } from "@/components/layouts/app-layout";
 import AppText from "@/components/texts/app-text";
 import { Book } from "@/types/Book";
 import { Pagination } from "@/types/Pagination";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useDeferredValue, useRef, useState } from "react";
 import { ActivityIndicator, PanResponder, ScrollView, StyleSheet, View } from "react-native";
 
 export default function Index() {
     const router = useRouter();
-
     const [currentPage, setCurrentPage] = useState(1);
+    const deferredCurrentPage = useDeferredValue(currentPage);
 
     const panResponder = useRef(
         PanResponder.create({
@@ -27,14 +27,16 @@ export default function Index() {
     ).current;
 
     const { isPending, data } = useQuery<Pagination<Book>>({
-        queryKey: ['GetBooks', currentPage, 12],
+        queryKey: ['GetBooks', deferredCurrentPage, 12],
         queryFn: () =>
             bookApi.fetchBooks({
-                page: currentPage,
+                page: deferredCurrentPage,
                 pageSize: 12
             }),
+        placeholderData: keepPreviousData
     });
 
+    // Functions
     const next = () => {
         setCurrentPage(prev => prev + 1);
     };
@@ -64,7 +66,7 @@ export default function Index() {
                 ...
             </AppText>
             <AppButton
-                title={currentPage.toString()}
+                title={deferredCurrentPage.toString()}
                 style={styles.navigationButton}
                 disabled
             />

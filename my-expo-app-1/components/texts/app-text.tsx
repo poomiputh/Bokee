@@ -1,5 +1,5 @@
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { StyleProp, Text, TextStyle, View, ViewStyle } from "react-native";
+import { GestureResponderEvent, StyleProp, Text, TextStyle, View, ViewStyle } from "react-native";
 
 type AppTextProps = {
     leftIcon?: React.ReactNode;
@@ -8,6 +8,7 @@ type AppTextProps = {
     wrapperStyle?: StyleProp<ViewStyle>;
     style?: StyleProp<TextStyle>;
     numberOfLines?: number;
+    onPress?: (event: GestureResponderEvent) => void;
 };
 
 export default function AppText(props: AppTextProps) {
@@ -46,6 +47,7 @@ export default function AppText(props: AppTextProps) {
                 ]}
                 numberOfLines={props.numberOfLines}
                 ellipsizeMode="tail"
+                onPress={props.onPress}
             >
                 {props.children}
             </Text>

@@ -8,10 +8,9 @@ import { Book } from "@/types/Book";
 import { FilterBooksDto } from "@/types/FilterBooksDto";
 import { Pagination } from "@/types/Pagination";
 import AntDesign from '@expo/vector-icons/AntDesign';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
+import { Fragment } from "react";
 import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 
 export default function Index() {
@@ -36,11 +35,50 @@ export default function Index() {
   });
 
   const randomBooks = useQuery<Pagination<Book>>({
-    queryKey: ['GetBooks', randomFilter.page, randomFilter.pageSize, randomFilter.random],
+    queryKey: ['GetBooks', "Random", randomFilter.random],
     queryFn: () =>
-      bookApi.fetchBooks(randomFilter)
+      bookApi.fetchBooks(randomFilter),
+    gcTime: 0
   });
 
+  // Sub-components
+  const feed = (feedTitle: string, books: Book[]) => {
+    return (
+      <Fragment>
+        <Row style={{ justifyContent: "space-between" }}>
+          <Col span={'auto'}>
+            <AppText
+              leftIcon={<AntDesign name="caret-right" size={24} color={theme.colors.text} />}
+              leftIconMargin={10}
+              style={[styles.titleHeader]}
+            >
+              {feedTitle}
+            </AppText>
+          </Col>
+          <Col span={'auto'} style={{ justifyContent: "center" }}>
+            <AppText>
+              See more
+            </AppText>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={12}>
+            <BookCarousel
+              data={books}
+              coverWidth={108}
+              coverHeight={162}
+              itemWidthModifier={0.35}
+              onPress={(book) => { goToBook(book.id) }}
+              disableCenterFocus
+            />
+          </Col>
+        </Row>
+        <Separator style={{ marginVertical: 20 }} />
+      </Fragment>
+    );
+  };
+
+  // Functions
   const refetchAll = () => {
     recentBooks.refetch();
     randomBooks.refetch();
@@ -61,82 +99,13 @@ export default function Index() {
     >
       <Container style={{ paddingVertical: 20 }}>
         {/* Continue reading */}
-        <Row>
-          <Col span={12}>
-            <AppText
-              leftIcon={<AntDesign name="caret-right" size={24} color={theme.colors.text} />}
-              leftIconMargin={10}
-              style={[styles.titleHeader]}
-            >
-              Continue reading
-            </AppText>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <BookCarousel
-              data={recentBooks.data?.data ?? []}
-              coverWidth={108}
-              coverHeight={162}
-              itemWidthModifier={0.35}
-              onPress={(book) => { goToBook(book.id) }}
-              disableCenterFocus
-            />
-          </Col>
-        </Row>
-        <Separator />
+        {feed("Continue reading", recentBooks.data?.data ?? [])}
 
         {/* Recently added */}
-        <Row>
-          <Col span={12}>
-            <AppText
-              leftIcon={<MaterialCommunityIcons name="lightning-bolt" size={24} color={theme.colors.text} />}
-              leftIconMargin={10}
-              style={[styles.titleHeader]}
-            >
-              Recently added
-            </AppText>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <BookCarousel
-              data={recentBooks.data?.data ?? []}
-              coverWidth={108}
-              coverHeight={162}
-              itemWidthModifier={0.35}
-              onPress={(book) => { goToBook(book.id) }}
-              disableCenterFocus
-            />
-          </Col>
-        </Row>
-        <Separator />
+        {feed("Recently added", recentBooks.data?.data ?? [])}
 
         {/* Feeling lucky? */}
-        <Row>
-          <Col span={12}>
-            <AppText
-              leftIcon={<FontAwesome name="random" size={20} color={theme.colors.text} />}
-              leftIconMargin={10}
-              style={[styles.titleHeader]}
-            >
-              Feeling lucky?
-            </AppText>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <BookCarousel
-              data={randomBooks.data?.data ?? []}
-              coverWidth={108}
-              coverHeight={162}
-              itemWidthModifier={0.35}
-              onPress={(book) => { goToBook(book.id) }}
-              disableCenterFocus
-            />
-          </Col>
-        </Row>
-        <Separator />
+        {feed("Feeling lucky?", randomBooks.data?.data ?? [])}
       </Container>
     </ScrollView>
   );

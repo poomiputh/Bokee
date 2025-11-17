@@ -1,3 +1,4 @@
+import React from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
 type BaseLayoutProps = {
@@ -38,8 +39,15 @@ const Row = ({ children, style }: RowProps) => (
 const Col = ({ span = 12, children, style }: ColProps) => {
   const isAuto = span === "auto";
   const widthStyle: ViewStyle = isAuto
-    ? { flexGrow: 0, flexShrink: 0, alignSelf: "flex-start" }
-    : { width: `${(span / 12) * 100}%` as any };
+    ? {
+        flexGrow: 0,
+        flexShrink: 0,
+        alignSelf: "stretch", // stretch height to match row
+      }
+    : {
+        width: `${(span / 12) * 100}%`,
+        alignSelf: "stretch", // ensure height stretch
+      };
 
   return (
     <View style={[styles.col, widthStyle, style]}>
@@ -50,15 +58,17 @@ const Col = ({ span = 12, children, style }: ColProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    // Optional base container styling
+    // optional base container styles
   },
   row: {
     flexDirection: "row",
     flexWrap: "wrap",
-    alignItems: "flex-start",
+    alignItems: "stretch", // key: stretch all cols to tallest
+    // backgroundColor: "red"
   },
   col: {
     padding: 10,
+    // backgroundColor: "blue"
   },
 });
 
