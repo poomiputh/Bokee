@@ -15,6 +15,12 @@ export const userApi = {
         const url = `${apiUrl}/api/User/CreateSavedBook`;
         const result = await axiosClient.post(url, createData);
         return result.data;
-    }
+    },
+
+    deleteSavedBook: async ({ bookId, categoryId }: { bookId: number, categoryId: number }) => {
+        const url = `${apiUrl}/api/User/DeleteSavedBook/${bookId}/${categoryId}`;
+        const result = await axiosClient.delete(url);
+        return result.data;
+    },
 
 };

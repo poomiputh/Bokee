@@ -28,6 +28,17 @@ namespace Controllers
             return Ok();
         }
 
+        [HttpDelete("{bookId}/{categoryId}")]
+        public async Task<IActionResult> DeleteSavedBook([FromRoute] int bookId, [FromRoute] int categoryId)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+            if (userId == 0) return Unauthorized();
+
+            var result = await _userService.DeleteSavedBook(userId, bookId, categoryId);
+            if (result == false) return BadRequest();
+            return Ok();
+        }
+
         [HttpPost]
         public async Task<IActionResult> SetBookProgress([FromBody] SetBookProgressDto progressData)
         {

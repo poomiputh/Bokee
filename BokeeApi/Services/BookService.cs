@@ -44,7 +44,10 @@ namespace Services
                         .Where(bp => bp.UserId == userId)
                         .Select(bp => bp.CurrentPage)
                         .FirstOrDefault(),
-                    IsSaved = b.UserSavedBooks.Any(sb => sb.UserId == userId),
+                    SavedId = b.UserSavedBooks
+                        .Where(sb => sb.UserId == userId)
+                        .Select(sb => sb.Id)
+                        .FirstOrDefault(),
                     CreatedDate = b.CreatedDate,
                     ModifiedDate = b.ModifiedDate
                 });
@@ -100,7 +103,10 @@ namespace Services
                         .Where(bp => bp.UserId == userId)
                         .Select(bp => bp.CurrentPage)
                         .FirstOrDefault(),
-                IsSaved = b.UserSavedBooks.Any(sb => sb.UserId == userId),
+                SavedId = b.UserSavedBooks
+                        .Where(sb => sb.UserId == userId)
+                        .Select(sb => sb.Id)
+                        .FirstOrDefault(),
                 CreatedDate = b.CreatedDate,
                 ModifiedDate = b.ModifiedDate
             })

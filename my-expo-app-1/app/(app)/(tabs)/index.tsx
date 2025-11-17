@@ -11,7 +11,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { Fragment } from "react";
-import { RefreshControl, ScrollView, StyleSheet } from "react-native";
+import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet } from "react-native";
 
 export default function Index() {
   const router = useRouter();
@@ -42,7 +42,7 @@ export default function Index() {
   });
 
   // Sub-components
-  const feed = (feedTitle: string, books: BookDto[]) => {
+  const feed = (feedTitle: string, books: BookDto[], isPending: boolean) => {
     return (
       <Fragment>
         <Row style={{ justifyContent: "space-between" }}>
@@ -63,14 +63,18 @@ export default function Index() {
         </Row>
         <Row>
           <Col span={12}>
-            <BookCarousel
-              data={books}
-              coverWidth={108}
-              coverHeight={162}
-              itemWidthModifier={0.35}
-              onPress={(book) => { goToBook(book.id) }}
-              disableCenterFocus
-            />
+            {isPending ?
+              <ActivityIndicator size="large" />
+              :
+              <BookCarousel
+                data={books}
+                coverWidth={108}
+                coverHeight={162}
+                itemWidthModifier={0.35}
+                onPress={(book) => { goToBook(book.id) }}
+                disableCenterFocus
+              />
+            }
           </Col>
         </Row>
         <Separator style={{ marginVertical: 20 }} />
@@ -99,13 +103,13 @@ export default function Index() {
     >
       <Container style={{ paddingVertical: 20 }}>
         {/* Continue reading */}
-        {feed("Continue reading", recentBooks.data?.data ?? [])}
+        {feed("Continue reading", recentBooks.data?.data ?? [], recentBooks.isPending)}
 
         {/* Recently added */}
-        {feed("Recently added", recentBooks.data?.data ?? [])}
+        {feed("Recently added", recentBooks.data?.data ?? [], recentBooks.isPending)}
 
         {/* Feeling lucky? */}
-        {feed("Feeling lucky?", randomBooks.data?.data ?? [])}
+        {feed("Feeling lucky?", randomBooks.data?.data ?? [], recentBooks.isPending)}
       </Container>
     </ScrollView>
   );

@@ -8,7 +8,7 @@ namespace Data.DTOs.Book
         public string? Description { get; set; }
         public int TotalPages { get; set; }
         public int? CurrentPage { get; set; }
-        public bool IsSaved { get; set; }
+        public int? SavedId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
     }

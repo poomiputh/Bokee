@@ -11,34 +11,60 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useState } from "react";
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
     const { bookId } = useLocalSearchParams<{ bookId: string }>();
     const { theme } = useAppTheme();
+    const [isSaved, setIsSaved] = useState(false);
 
     const navigation = useNavigation();
     const router = useRouter();
     const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
+    // APIs
+    const saveBookMutation = useMutation({
+        mutationFn: userApi.createSavedBook
+    });
+
+    const unsaveBookMutation = useMutation({
+        mutationFn: userApi.deleteSavedBook
+    })
+
     const { isPending, data } = useQuery<BookDto>({
         queryKey: ['book', bookId],
         queryFn: () =>
-            bookApi.fetchBook(parseInt(bookId))
+            bookApi.fetchBook(parseInt(bookId)),
     });
 
+    // Functions
     const goToPage = (page: number) => {
         router.push(`/book/${bookId}/${page}`)
     };
 
-    const mutation = useMutation({
-        mutationFn: userApi.createSavedBook
-    });
-
     const saveBook = () => {
-        mutation.mutate({
+        saveBookMutation.mutate({
             bookId: parseInt(bookId),
             categoryId: 1
+        }, {
+            onSuccess: () => {
+                setIsSaved(true);
+            }
+        })
+    }
+
+    const unsaveBook = () => {
+        unsaveBookMutation.mutate({
+            bookId: parseInt(bookId),
+            categoryId: 1
+        }, {
+            onSuccess: () => {
+                setIsSaved(false);
+            },
+            onError: (error, val) => {
+                console.log(error.message, val);
+            }
         })
     }
 
@@ -70,12 +96,20 @@ export default function Index() {
                                 </View>
 
                                 <View style={{ flexDirection: "row", padding: 0, margin: 0, gap: 10 }}>
-                                    <AppButton
-                                        title=""
-                                        leftIcon={<FontAwesome name="bookmark" size={24} color={theme.colors.primaryContrastTex} />}
-                                        style={[styles.button, { aspectRatio: 1 }]}
-                                        onPress={() => saveBook()}
-                                    />
+                                    {isSaved ?
+                                        <AppButton
+                                            title=""
+                                            leftIcon={<FontAwesome name="bookmark" size={24} color={theme.colors.primaryContrastTex} />}
+                                            style={[styles.button, { aspectRatio: 1 }]}
+                                            onPress={() => unsaveBook()}
+                                        /> :
+                                        <AppButton
+                                            title=""
+                                            leftIcon={<FontAwesome name="bookmark-o" size={24} color={theme.colors.primaryContrastTex} />}
+                                            style={[styles.button, { aspectRatio: 1 }]}
+                                            onPress={() => saveBook()}
+                                        />
+                                    }
                                     <AppButton
                                         title="Read"
                                         leftIcon={<FontAwesome5 name="readme" size={24} color={theme.colors.primaryContrastTex} />}

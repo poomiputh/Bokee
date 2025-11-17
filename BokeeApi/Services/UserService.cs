@@ -43,6 +43,7 @@ namespace Services
 
         public async Task<bool> DeleteSavedBook(int userId, int bookId, int categoryId)
         {
+            Console.WriteLine($"{userId}, {bookId}, {categoryId}");
             SavedBook? savedBook = await _dbContext.SavedBooks
                 .Where(sb => sb.UserId == userId && sb.BookId == bookId && sb.CategoryId == categoryId)
                 .FirstOrDefaultAsync();

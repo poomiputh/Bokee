@@ -5,7 +5,7 @@ export type BookDto = {
     description?: string;
     totalPages: number;
     currentPage?: number;
-    isSaved: boolean;
+    savedId?: number;
     createdDate: Date;
     modifiedDate: Date;
 };
