@@ -22,30 +22,31 @@ namespace Controllers
         [HttpGet]
         public async Task<IActionResult> GetBooks([FromQuery] FilterBooksDto filter)
         {
-            var result = await _bookService.GetBooks(filter);
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+            if (userId == 0) return Unauthorized();
+
+            var result = await _bookService.GetBooks(userId, filter);
             return Ok(result);
         }
 
         [HttpGet("{bookId}")]
         public async Task<IActionResult> GetBook(int bookId)
         {
-            var result = await _bookService.GetBook(bookId);
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+            if (userId == 0) return Unauthorized();
+
+            var result = await _bookService.GetBook(userId, bookId);
             if (result == null) return NotFound();
             return Ok(result);
         }
 
         [HttpGet("{bookId}/{page}")]
-        public async Task<IActionResult> GetPage(int bookId, int page, [FromQuery] bool focus)
+        public async Task<IActionResult> GetPage(int bookId, int page)
         {
-            // Client cache prevent progress update
-            // if (focus)
-            // {
-            //     int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            //     if (userId == 0) return Unauthorized();
-            //     await _userService.SetBookProgress(userId, bookId, page);
-            // }
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+            if (userId == 0) return Unauthorized();
 
-            var book = await _bookService.GetBook(bookId);
+            var book = await _bookService.GetBook(userId, bookId);
             if (book == null) return NotFound();
 
             var imagePath = await _bookService.GetPagePath(bookId, page);

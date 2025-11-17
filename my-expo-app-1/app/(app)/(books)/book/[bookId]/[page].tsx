@@ -1,8 +1,8 @@
 import { userApi } from "@/api/user-api";
 import { parseSource } from "@/utils/imageUtils";
 import { useMutation } from "@tanstack/react-query";
-import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
-import { useRef } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useRef } from "react";
 import { Dimensions, GestureResponderEvent, Image, PanResponder, View } from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -51,12 +51,12 @@ export default function Page() {
         })
     ).current;
 
-    useFocusEffect(() => {
+    useEffect(() => {
         mutation.mutate({
             bookId: parseInt(bookId),
             page: parseInt(page)
         })
-    });
+    }, []);
 
     return (
         <View {...panResponder.panHandlers} style={{ flex: 1 }}>

@@ -4,7 +4,8 @@ export type BookDto = {
     storageGuid?: string;
     description?: string;
     totalPages: number;
-    unread: boolean;
+    currentPage?: number;
+    isSaved: boolean;
     createdDate: Date;
     modifiedDate: Date;
 };

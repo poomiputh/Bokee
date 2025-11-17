@@ -39,7 +39,7 @@ export default function BookCover(props: BookCoverProps) {
                     source={parseSource(`${apiUrl}/api/Book/GetPage/${props.book.id}/1`)}
                 />
 
-                {props.book.unread &&
+                {!props.book.currentPage &&
                     <View
                         style={{
                             position: "absolute",

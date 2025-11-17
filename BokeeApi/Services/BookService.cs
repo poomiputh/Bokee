@@ -30,7 +30,7 @@ namespace Services
             _wwwRootPath = env.WebRootPath;
         }
 
-        public async Task<PaginationDto<BookDto>> GetBooks(FilterBooksDto filter)
+        public async Task<PaginationDto<BookDto>> GetBooks(int userId, FilterBooksDto filter)
         {
             var query = _dbContext.Books
                 .Select(b => new BookDto
@@ -40,7 +40,11 @@ namespace Services
                     StorageGuid = b.StorageGuid,
                     Description = b.Description,
                     TotalPages = b.TotalPages,
-                    Unread = !b.UserBookProgresses.Any(),
+                    CurrentPage = b.UserBookProgresses
+                        .Where(bp => bp.UserId == userId)
+                        .Select(bp => bp.CurrentPage)
+                        .FirstOrDefault(),
+                    IsSaved = b.UserSavedBooks.Any(sb => sb.UserId == userId),
                     CreatedDate = b.CreatedDate,
                     ModifiedDate = b.ModifiedDate
                 });
@@ -81,7 +85,7 @@ namespace Services
             };
         }
 
-        public async Task<BookDto?> GetBook(int bookId)
+        public async Task<BookDto?> GetBook(int userId, int bookId)
         {
             var result = await _dbContext.Books
             .Where(b => b.Id == bookId)
@@ -92,7 +96,11 @@ namespace Services
                 StorageGuid = b.StorageGuid,
                 Description = b.Description,
                 TotalPages = b.TotalPages,
-                Unread = !b.UserBookProgresses.Any(),
+                CurrentPage = b.UserBookProgresses
+                        .Where(bp => bp.UserId == userId)
+                        .Select(bp => bp.CurrentPage)
+                        .FirstOrDefault(),
+                IsSaved = b.UserSavedBooks.Any(sb => sb.UserId == userId),
                 CreatedDate = b.CreatedDate,
                 ModifiedDate = b.ModifiedDate
             })
