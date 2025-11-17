@@ -5,7 +5,7 @@ type AppTextProps = {
     leftIcon?: React.ReactNode;
     leftIconMargin?: number;
     children?: React.ReactNode;
-    wrapperStyle?: StyleProp<ViewStyle>;
+    wrapperStyles?: StyleProp<ViewStyle>;
     style?: StyleProp<TextStyle>;
     numberOfLines?: number;
     onPress?: (event: GestureResponderEvent) => void;
@@ -20,9 +20,9 @@ export default function AppText(props: AppTextProps) {
                 {
                     flexDirection: "row",
                     padding: 0,
-                    margin: 0
+                    margin: 0,
                 },
-                props.wrapperStyle
+                props.wrapperStyles
             ]}
         >
             {!!props.leftIcon &&
@@ -30,6 +30,7 @@ export default function AppText(props: AppTextProps) {
                     style={{
                         justifyContent: "center",
                         padding: 0,
+                        margin: 0,
                         marginRight:
                             props.leftIconMargin
                     }}

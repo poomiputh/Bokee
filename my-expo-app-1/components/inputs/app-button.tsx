@@ -64,7 +64,7 @@ export default function AppButton(props: AppButtonProps) {
         </View>
       }
       <AppText
-        wrapperStyle={{ justifyContent: "center" }}
+        wrapperStyles={{ justifyContent: "center" }}
         style={styles.buttonText}
       >
         {props.title}
