@@ -1,4 +1,5 @@
 import { bookApi } from "@/api/book-api";
+import { userApi } from "@/api/user-api";
 import AppButton from "@/components/inputs/app-button";
 import { Col, Container, Row } from "@/components/layouts/app-layout";
 import Separator from "@/components/layouts/separator";
@@ -8,7 +9,7 @@ import { BookDto } from "@/types/BookDto";
 import { parseSource } from "@/utils/imageUtils";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
@@ -30,13 +31,16 @@ export default function Index() {
         router.push(`/book/${bookId}/${page}`)
     };
 
-    // useEffect(() => {
-    //     if (!isPending) {
-    //         navigation.setOptions({
-    //             title: "My Dynamic Header",
-    //         });
-    //     }
-    // }, [isPending]);
+    const mutation = useMutation({
+        mutationFn: userApi.createSavedBook
+    });
+
+    const saveBook = () => {
+        mutation.mutate({
+            bookId: parseInt(bookId),
+            categoryId: 1
+        })
+    }
 
     return (
         <FlatList
@@ -70,7 +74,7 @@ export default function Index() {
                                         title=""
                                         leftIcon={<FontAwesome name="bookmark" size={24} color={theme.colors.primaryContrastTex} />}
                                         style={[styles.button, { aspectRatio: 1 }]}
-                                        onPress={() => goToPage(1)}
+                                        onPress={() => saveBook()}
                                     />
                                     <AppButton
                                         title="Read"

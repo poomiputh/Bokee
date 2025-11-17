@@ -16,7 +16,7 @@ export default function TabLayout() {
 
   useEffect(() => {
     navigation.setOptions({
-      title: pathNameMap.get(pathName)
+      title: pathNameMap.get(pathName),
     })
   }, [pathName]);
 

@@ -18,7 +18,9 @@ export default function AppLayout() {
       backBehavior="history"
       screenOptions={{
         // headerTitle: titleMap.get(currentTab) ?? "Bokee",
-        // headerSearchBarOptions: {},
+        // headerSearchBarOptions: {
+          
+        // },
         headerShown: !hideHeader,
         drawerStyle: {
           width: 240
