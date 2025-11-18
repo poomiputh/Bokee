@@ -98,7 +98,7 @@ var app = builder.Build();
 //         Directory.Delete(bookPath, recursive: true);
 //     }
 
-//     await bookService.AddBooks(@"E:\Media\Horny\Horny_Read\Random");
+//     await bookService.AddBooks(@"C:\Users\wisel\Downloads\books");
 // }
 // catch (Exception ex)
 // {

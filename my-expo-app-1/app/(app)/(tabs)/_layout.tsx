@@ -9,7 +9,7 @@ export default function TabLayout() {
   const pathName = usePathname();
 
   const pathNameMap: Map<string, string> = new Map([
-    ["/", "Bokee"],
+    ["/", "Home"],
     ["/library", "Public Library"],
     ["/account", "Your Account"],
   ]);

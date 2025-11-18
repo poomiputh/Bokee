@@ -2,7 +2,13 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import React, { useEffect, useRef } from "react";
 import { Animated, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
 
-export default function BottomModal({ visible, onClose, children }: { visible: boolean, onClose: () => void, children: React.ReactNode }) {
+export type BottomModalProps = {
+    visible: boolean;
+    onClose: () => void;
+    children: React.ReactNode
+};
+
+export default function BottomModal({ visible, onClose, children }: BottomModalProps) {
     const { theme } = useAppTheme();
     const slideAnim = useRef(new Animated.Value(0)).current; // 0 = hidden, 1 = shown
 
@@ -47,14 +53,23 @@ export default function BottomModal({ visible, onClose, children }: { visible: b
     });
 
     return (
-        <Modal visible={visible} transparent animationType="slide">
+        <Modal
+            visible={visible}
+            transparent
+            animationType="slide"
+        >
             <View style={styles.overlay}>
 
                 {/* BACKDROP */}
-                <TouchableOpacity style={styles.backdrop} activeOpacity={1} />
+                <TouchableOpacity
+                    style={styles.backdrop}
+                    activeOpacity={1}
+                    onPress={() => onClose && onClose()}
+                />
 
                 {/* BOTTOM SHEET */}
-                <Animated.View style={[styles.container, { transform: [{ translateY }] }]}>
+                <Animated.View
+                    style={[styles.container, { transform: [{ translateY }] }]}>
                     {children}
                 </Animated.View>
 

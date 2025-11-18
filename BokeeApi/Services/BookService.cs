@@ -4,6 +4,7 @@ using Data;
 using Data.DTOs;
 using Data.DTOs.Book;
 using Data.Models;
+using ImageMagick;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
@@ -220,9 +221,10 @@ namespace Services
                         e.Name.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) ||
                         e.Name.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
                         e.Name.EndsWith(".gif", StringComparison.OrdinalIgnoreCase) ||
-                        e.Name.EndsWith(".webp", StringComparison.OrdinalIgnoreCase)))
+                        e.Name.EndsWith(".webp", StringComparison.OrdinalIgnoreCase) ||
+                        e.Name.EndsWith(".jp2", StringComparison.OrdinalIgnoreCase)))
                     {
-                        string errorMessage = $"ZIP '{zipPath}' contains non-image files.";
+                        string errorMessage = $"ZIP '{zipPath}' contains unsupported files.";
                         // throw new InvalidOperationException(errorMessage);
                         Console.WriteLine(errorMessage);
                         continue;
@@ -231,12 +233,45 @@ namespace Services
                     int order = 1;
                     foreach (var entry in imageEntries)
                     {
+                        if (order == 50)
+                        {
+                            Console.WriteLine("Page limit reached.");
+                            break;
+                        }
+
                         var ext = Path.GetExtension(entry.Name);
                         var newName = $"{order}{ext}";
                         var fullPath = Path.Combine(extractFolder, newName);
 
                         Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
-                        entry.ExtractToFile(fullPath, overwrite: true);
+
+                        if (ext == ".jp2")
+                        {
+                            // JP2 → JPG CONVERSION
+                            using (var ms = new MemoryStream())
+                            {
+                                using (var entryStream = entry.Open())
+                                {
+                                    entryStream.CopyTo(ms);
+                                }
+
+                                ms.Position = 0;
+
+                                using (var image = new MagickImage(ms))
+                                {
+                                    newName = $"{order}.jpg";
+                                    fullPath = Path.Combine(extractFolder, newName);
+                                    image.Format = MagickFormat.Jpg;
+                                    image.Write(fullPath);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Extract normal image
+                            entry.ExtractToFile(fullPath, overwrite: true);
+                        }
+
                         order++;
                     }
 
